@@ -11,6 +11,11 @@ namespace WarOfTanks.Cosmetics
 
         void Start()
         {
+            InitSprite();
+        }
+
+        void InitSprite()
+        {
             Sprite headSprite, bodySprite;
             color.a = 1f;
 
