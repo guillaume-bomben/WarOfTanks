@@ -5,7 +5,7 @@ namespace WarOfTanks
 {
     public abstract class Unit : MonoBehaviour
     {
-        [SerializeField] Stats_SO stats;
-        [SerializeField] new string name;
+        [SerializeField] public Stats_SO stats;
+        public new string name;
     }
 }

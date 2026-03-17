@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 namespace WarOfTanks.Cosmetics
@@ -8,10 +9,12 @@ namespace WarOfTanks.Cosmetics
         public Color color = Color.white; 
 
         private SpriteRenderer headSR, bodySR;
+        private TextMeshPro textMesh;
 
         void Start()
         {
             InitSprite();
+            InitNameText();
         }
 
         void InitSprite()
@@ -28,6 +31,12 @@ namespace WarOfTanks.Cosmetics
             bodySprite = Resources.Load<Sprite>($"Sprites/Tanks/Body/tank_body_{skin.ToString().ToLower()}_camo");
             bodySR.sprite = bodySprite;
             bodySR.color = color;
+        }
+    
+        void InitNameText()
+        {
+            textMesh = transform.Find("Name").GetComponent<TextMeshPro>();
+            textMesh.text = GetComponent<Unit>().name;
         }
     }
 
