@@ -3,7 +3,7 @@ using UnityEngine.Tilemaps;
 
 namespace  WarOfTanks.MapGen
 {
-    [ExecuteAlways]
+    // [ExecuteAlways]
     public class TilemapPerlinGenerator : MonoBehaviour
     {
         [Header("Noise Settings")]
