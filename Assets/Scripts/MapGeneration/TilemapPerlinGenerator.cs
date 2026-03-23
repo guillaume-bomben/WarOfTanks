@@ -6,6 +6,8 @@ namespace  WarOfTanks.MapGen
     // [ExecuteAlways]
     public class TilemapPerlinGenerator : MonoBehaviour
     {
+        public bool autoUpdate = false;
+
         [Header("Noise Settings")]
         [Range(1, 8)]   public int octaves = 4;
         [Range(1f, 4f)] public float lacunarity = 2f;
@@ -35,9 +37,11 @@ namespace  WarOfTanks.MapGen
         [Header("Terrains (ordered by height)")]
         public TerrainType[] terrains;
 
+        /*
         [Header("Slope tiles")]
         public TileBase verticalSlope;
         public TileBase horizontalSlope;
+        */
 
         float[,] heightMap;
         TerrainDataModifier[,] modifierMap;
@@ -63,6 +67,7 @@ namespace  WarOfTanks.MapGen
             heightMap = new float[width, height];
             modifierMap = new TerrainDataModifier[width, height];
 
+            
             // Génération de la heightmap
             for (int x = 0; x < width; x++)
             {
@@ -78,7 +83,7 @@ namespace  WarOfTanks.MapGen
                     heightMap[x, y] = noise;
                 }
             }
-
+    
             // Placement des tiles
             for (int x = 0; x < width; x++)
             {
@@ -89,23 +94,23 @@ namespace  WarOfTanks.MapGen
                     TerrainType terrain = terrains[currentLevel];
                     modifierMap[x, y] = terrain.modifier;
 
-                    groundTilemap.SetTile(pos, terrain.tile);
+                    // groundTilemap.SetTile(pos, terrain.ruleTile);
 
                     if (terrain.isWalkable)
-                        walkableTilemap.SetTile(pos, terrain.tile);
+                        walkableTilemap.SetTile(pos, terrain.ruleTile);
                     else
-                        unwalkableTilemap.SetTile(pos, terrain.tile);
+                        unwalkableTilemap.SetTile(pos, terrain.ruleTile);
 
                     if (terrain.isHazard)
-                        hazardTilemap.SetTile(pos, terrain.tile);
-
-                    if (TryGetSlope(x, y, currentLevel, out TileBase slopeTile))
-                    {
-                        groundTilemap.SetTile(pos, slopeTile);
-                        hazardTilemap.SetTile(pos, slopeTile);
-                    }
+                        hazardTilemap.SetTile(pos, terrain.ruleTile);
                 }
             }
+
+            walkableTilemap.RefreshAllTiles();
+            unwalkableTilemap.RefreshAllTiles();
+            hazardTilemap.RefreshAllTiles();
+
+            // groundTilemap.RefreshAllTiles();
         }
 
         float GenerateNoise(float x, float y)
@@ -145,6 +150,7 @@ namespace  WarOfTanks.MapGen
             return terrains.Length - 1;
         }
 
+        /*
         bool TryGetSlope(int x, int y, int currentLevel, out TileBase slopeTile)
         {
             slopeTile = null;
@@ -177,6 +183,7 @@ namespace  WarOfTanks.MapGen
 
             return false;
         }
+        */
 
         bool InBounds(int x, int y)
         {
@@ -195,6 +202,7 @@ namespace  WarOfTanks.MapGen
             return modifierMap[x, y];
         }
 
+        /*
         // récupère une tile "pente" en fonction de la direction
         TileBase GetSlopeTile(Vector2Int dir)
         {
@@ -206,6 +214,7 @@ namespace  WarOfTanks.MapGen
         
             return verticalSlope;
         }
+        */
 
         float AppyFalloff(int x, int y)
         {

@@ -11,7 +11,7 @@ public class TilemapPerlinGeneratorEditor : Editor
     {
         TilemapPerlinGenerator mapGen = (TilemapPerlinGenerator)target;
 
-        if (DrawDefaultInspector())
+        if (DrawDefaultInspector() && mapGen.autoUpdate)
         {
             mapGen.GenerateMap();
         }

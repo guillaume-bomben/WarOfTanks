@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 namespace WarOfTanks.MapGen
 {
@@ -8,14 +7,14 @@ namespace WarOfTanks.MapGen
     {
         public string name;
 
+        public TerrainRuleTile ruleTile;
+        public TerrainDataModifier modifier;
         [Range(0f, 1f)]
         public float height;
 
-        public TileBase tile;
 
         public bool isWalkable;
         public bool isHazard;
 
-        public TerrainDataModifier modifier;
     }
 }
