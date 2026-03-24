@@ -26,22 +26,17 @@ namespace  WarOfTanks.MapGen
 
         [Header("Tilemap")]
         [Tooltip("Visual tilemap")] 
-        public Tilemap groundTilemap;
+        public Tilemap waterMap;
         [Tooltip("Units can \"walk\" on these tiles")] 
-        public Tilemap walkableTilemap;
+        public Tilemap sandMap;
         [Tooltip("Units can \"walk\" on these tiles but their stats will be impacted")] 
-        public Tilemap hazardTilemap;
+        public Tilemap grassMap;
         [Tooltip("Units can't \"walk\" on these tiles")] 
-        public Tilemap unwalkableTilemap;
+        public Tilemap mountainMap;
+        public Tilemap hazardMap;
 
         [Header("Terrains (ordered by height)")]
         public TerrainType[] terrains;
-
-        /*
-        [Header("Slope tiles")]
-        public TileBase verticalSlope;
-        public TileBase horizontalSlope;
-        */
 
         float[,] heightMap;
         TerrainDataModifier[,] modifierMap;
@@ -53,13 +48,14 @@ namespace  WarOfTanks.MapGen
             Random.InitState(seed);
             Vector2 seedOffset = new Vector2(Random.value * 10_000f, Random.value * 10_000f);
 
-            if (walkableTilemap == null || terrains.Length == 0)
+            if (sandMap == null || terrains.Length == 0)
                 return;
 
-            groundTilemap.ClearAllTiles();
-            walkableTilemap.ClearAllTiles();
-            unwalkableTilemap.ClearAllTiles();
-            hazardTilemap.ClearAllTiles();
+            waterMap.ClearAllTiles();
+            sandMap.ClearAllTiles();
+            mountainMap.ClearAllTiles();
+            grassMap.ClearAllTiles();
+            hazardMap.ClearAllTiles();
 
             int offsetX = width / 2;
             int offsetY = height / 2;
@@ -80,7 +76,7 @@ namespace  WarOfTanks.MapGen
                     float falloff = AppyFalloff(x, y);
                     noise = Mathf.Clamp01(noise - falloff);
 
-                    heightMap[x, y] = noise;
+                    heightMap[x, y] = noise + 0.1f;
                 }
             }
     
@@ -96,19 +92,34 @@ namespace  WarOfTanks.MapGen
 
                     // groundTilemap.SetTile(pos, terrain.ruleTile);
 
-                    if (terrain.isWalkable)
-                        walkableTilemap.SetTile(pos, terrain.ruleTile);
-                    else
-                        unwalkableTilemap.SetTile(pos, terrain.ruleTile);
+                    switch (terrain.ruleTile.terrainKind)
+                    {
+                        case TerrainRuleTile.TerrainKind.Water:
+                            waterMap.SetTile(pos, terrain.ruleTile);
+                            break;
+                        
+                        case TerrainRuleTile.TerrainKind.Sand:
+                            sandMap.SetTile(pos, terrain.ruleTile);
+                            break;
+
+                        case TerrainRuleTile.TerrainKind.Grass:
+                            grassMap.SetTile(pos, terrain.ruleTile);
+                            break;
+
+                        case TerrainRuleTile.TerrainKind.Rock:
+                            mountainMap.SetTile(pos, terrain.ruleTile);
+                            break;
+                    }
 
                     if (terrain.isHazard)
-                        hazardTilemap.SetTile(pos, terrain.ruleTile);
+                        hazardMap.SetTile(pos, terrain.ruleTile);
                 }
             }
 
-            walkableTilemap.RefreshAllTiles();
-            unwalkableTilemap.RefreshAllTiles();
-            hazardTilemap.RefreshAllTiles();
+            waterMap.RefreshAllTiles();
+            sandMap.RefreshAllTiles();
+            mountainMap.RefreshAllTiles();
+            grassMap.RefreshAllTiles();
 
             // groundTilemap.RefreshAllTiles();
         }
@@ -192,7 +203,7 @@ namespace  WarOfTanks.MapGen
 
         public TerrainDataModifier GetModifierAtWorldPos(Vector3 worldPos)
         {
-            Vector3Int cell = groundTilemap.WorldToCell(worldPos);
+            Vector3Int cell = waterMap.WorldToCell(worldPos);
             int x = cell.x + width / 2;
             int y = cell.y + height / 2;
 
