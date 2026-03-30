@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -25,13 +26,9 @@ namespace  WarOfTanks.MapGen
         public Vector2 offset = new Vector2(100f, 100f);
 
         [Header("Tilemap")]
-        [Tooltip("Visual tilemap")] 
         public Tilemap waterMap;
-        [Tooltip("Units can \"walk\" on these tiles")] 
         public Tilemap sandMap;
-        [Tooltip("Units can \"walk\" on these tiles but their stats will be impacted")] 
         public Tilemap grassMap;
-        [Tooltip("Units can't \"walk\" on these tiles")] 
         public Tilemap mountainMap;
         public Tilemap hazardMap;
 
@@ -89,8 +86,6 @@ namespace  WarOfTanks.MapGen
                     int currentLevel = GetLevel(heightMap[x, y]);
                     TerrainType terrain = terrains[currentLevel];
                     modifierMap[x, y] = terrain.modifier;
-
-                    // groundTilemap.SetTile(pos, terrain.ruleTile);
 
                     switch (terrain.ruleTile.terrainKind)
                     {
