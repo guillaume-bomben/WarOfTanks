@@ -26,14 +26,15 @@ namespace  WarOfTanks.MapGen
         public Vector2 offset = new Vector2(100f, 100f);
 
         [Header("Tilemap")]
+        public Tilemap worldMap;
         public Tilemap waterMap;
         public Tilemap sandMap;
         public Tilemap grassMap;
-        public Tilemap mountainMap;
+        public Tilemap unwalkableMap;
         public Tilemap hazardMap;
 
         [Header("Terrains (ordered by height)")]
-        public TerrainType[] terrains;
+        public TerrainData[] terrains;
 
         float[,] heightMap;
         TerrainDataModifier[,] modifierMap;
@@ -50,7 +51,7 @@ namespace  WarOfTanks.MapGen
 
             waterMap.ClearAllTiles();
             sandMap.ClearAllTiles();
-            mountainMap.ClearAllTiles();
+            unwalkableMap.ClearAllTiles();
             grassMap.ClearAllTiles();
             hazardMap.ClearAllTiles();
 
@@ -84,8 +85,9 @@ namespace  WarOfTanks.MapGen
                 {
                     Vector3Int pos = new Vector3Int(x - offsetX, y - offsetY, 0);
                     int currentLevel = GetLevel(heightMap[x, y]);
-                    TerrainType terrain = terrains[currentLevel];
+                    TerrainData terrain = terrains[currentLevel];
                     modifierMap[x, y] = terrain.modifier;
+                    terrain.SetWorldPos(new Vector3(x, y));
 
                     switch (terrain.ruleTile.terrainKind)
                     {
@@ -102,21 +104,23 @@ namespace  WarOfTanks.MapGen
                             break;
 
                         case TerrainRuleTile.TerrainKind.Rock:
-                            mountainMap.SetTile(pos, terrain.ruleTile);
+                            unwalkableMap.SetTile(pos, terrain.ruleTile);
                             break;
                     }
 
                     if (terrain.isHazard)
                         hazardMap.SetTile(pos, terrain.ruleTile);
+                    
+                    worldMap.SetTile(pos, terrain.ruleTile);
                 }
             }
 
             waterMap.RefreshAllTiles();
             sandMap.RefreshAllTiles();
-            mountainMap.RefreshAllTiles();
+            unwalkableMap.RefreshAllTiles();
             grassMap.RefreshAllTiles();
 
-            // groundTilemap.RefreshAllTiles();
+            worldMap.RefreshAllTiles();
         }
 
         float GenerateNoise(float x, float y)
