@@ -1,70 +1,42 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using WarOfTanks.MapGen;
-using WarOfTanks.Nav;
 
-public class GridController : MonoBehaviour
+namespace WarOfTanks.Nav
 {
-    public Vector2Int gridSize;
-    public float cellRadius = 0.5f;
-    public FlowField currentflowField;
-    public TilemapPerlinGenerator mapGen;
-
-    public bool displayGrid = true;
-
-    
-    public void InitializeFlowField()
+    public class GridController : MonoBehaviour
     {
-        gridSize = new Vector2Int(mapGen.width, mapGen.height);
-        currentflowField = new FlowField(cellRadius, gridSize);
-        currentflowField.CreateGrid(mapGen);
-    }
+        public Vector2Int gridSize;
+        public float cellRadius = 0.5f;
+        public FlowField curFlowField;
+        public GridDebug gridDebug;
+        public TilemapPerlinGenerator map;
 
-    void OnDrawGizmos()
-    {
-        if (!displayGrid) return;
-
-        if (currentflowField != null)
+        private void InitializeFlowField()
         {
-            DrawGrid(gridSize, Color.green, cellRadius);
+            curFlowField = new FlowField(cellRadius, gridSize, map);
+            curFlowField.CreateGrid();
+            gridDebug.SetFlowField(curFlowField);
         }
-    }
 
-    void DrawGrid(Vector2Int drawGridSize, Color drawColor, float drawCellRadius)
-    {
-        if (currentflowField == null) return;
-        
-        Gizmos.color = drawColor;
-
-        for (int x = 0; x < drawGridSize.x; x++)
+        private void Update()
         {
-            for (int y = 0; y < drawGridSize.y; y++)
+            if (Input.GetMouseButtonDown(0))
             {
-                Cell c = currentflowField.grid[x, y];
+                InitializeFlowField();
 
-                Vector3 center = new Vector3(
-                    drawCellRadius * 2 * c.worldPos.x + drawCellRadius, 
-                    drawCellRadius * 2 * c.worldPos.y + drawCellRadius, 
-                    0
-                );
-                Vector3 size = Vector3.one * drawCellRadius * 2;
-                Gizmos.DrawWireCube(center, size);
+                curFlowField.CreateCostField();
+
+                Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f);
+                Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(mousePos);
+                Cell destinationCell = curFlowField.GetCellFromWorldPos(worldMousePos);
+                
+                curFlowField.CreateIntegrationField(destinationCell);
+                curFlowField.CreateFlowField();
+
+                gridDebug.DrawFlowField();
+
+                Debug.Log($"Clicked at {destinationCell.gridIndex}");
             }
-        }
-    }
-
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f);
-            Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(mousePos);
-
-            Cell dest = currentflowField.GetCellFromWorldPos(worldMousePos);
-            currentflowField.CreateIntegrationField(dest);
-            currentflowField.CreateFlowField();
         }
     }
 }

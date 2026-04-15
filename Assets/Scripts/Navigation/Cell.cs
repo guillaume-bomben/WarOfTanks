@@ -30,6 +30,8 @@ namespace WarOfTanks.Nav
                 cost = byte.MaxValue;
             else
                 cost += (byte)amount;
+
+            // Debug.Log($"Cell at {gridIndex} bestDir = {bestDirection}");
         }
     }
 }
