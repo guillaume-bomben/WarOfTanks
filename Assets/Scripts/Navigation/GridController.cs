@@ -34,8 +34,6 @@ namespace WarOfTanks.Nav
                 curFlowField.CreateFlowField();
 
                 gridDebug.DrawFlowField();
-
-                Debug.Log($"Clicked at {destinationCell.gridIndex}");
             }
         }
     }

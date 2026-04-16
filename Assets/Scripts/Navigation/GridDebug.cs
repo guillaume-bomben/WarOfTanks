@@ -69,23 +69,23 @@ namespace WarOfTanks.Nav
         private void DisplayCell(Cell cell)
         {
             GameObject iconGO = new GameObject();
+            iconGO.transform.name = cell.gridIndex.ToString();
             SpriteRenderer iconSR = iconGO.AddComponent<SpriteRenderer>();
             iconGO.transform.parent = transform;
             iconGO.transform.position = cell.worldPos;
             iconSR.sortingOrder = 99;
+            CellDataDisplayer dataDisplayer = iconGO.AddComponent<CellDataDisplayer>();
+            dataDisplayer.SetCell(cell);
 
-            Sprite originIcon = ffIcons[0];
-            Sprite unwalkableIcon = ffIcons[1];
-            Sprite arrowIcon = ffIcons[2];
+            Sprite originIcon       = ffIcons[0];
+            Sprite unwalkableIcon   = ffIcons[1];
+            Sprite arrowIcon        = ffIcons[2];
 
 
-            // Cost == 0 when this is the destination cell
-            if (cell == curFlowField.destinationCell)
+            if (cell.cost == 0)
             {
                 iconSR.sprite = originIcon;
-                Debug.Log($"cost=0 @ {cell.gridIndex}");
             }
-            // byte.MaxValue == 255 when this is unwalkable (mountain, water, ...)
             else if (cell.cost == byte.MaxValue)
             {
                 iconSR.sprite = unwalkableIcon;

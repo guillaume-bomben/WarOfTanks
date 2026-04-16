@@ -71,7 +71,7 @@ namespace WarOfTanks.Nav
                         
                         if (map.hazardMap.HasTile(tilePos))
                         {
-                            TerrainDataModifier mod = map.GetModifierAtWorldPos(worldPos);
+                            TerrainDataModifier mod = map.GetModifierAtWorldPos(new Vector3(x, y));
                             if (mod != null)
                             {
                                 grid[x, y].IncreaseCost(1);
@@ -159,14 +159,16 @@ namespace WarOfTanks.Nav
 
         public Cell GetCellFromWorldPos(Vector3 worldPos)
         {
-            float percentX = worldPos.x / (gridSize.x * cellDiameter);
-            float percentY = worldPos.y / (gridSize.y * cellDiameter);
+            Vector3 localPos = worldPos - worldOffset;
+
+            float percentX = localPos.x / (gridSize.x * cellDiameter);
+            float percentY = localPos.y / (gridSize.y * cellDiameter);
 
             percentX = Mathf.Clamp01(percentX);
             percentY = Mathf.Clamp01(percentY);
 
-            int x = Mathf.Clamp(Mathf.FloorToInt((gridSize.x) * percentX), 0, gridSize.x - 1);
-            int y = Mathf.Clamp(Mathf.FloorToInt((gridSize.y) * percentY), 0, gridSize.y - 1);
+            int x = Mathf.Clamp(Mathf.FloorToInt(gridSize.x * percentX), 0, gridSize.x - 1);
+            int y = Mathf.Clamp(Mathf.FloorToInt(gridSize.y * percentY), 0, gridSize.y - 1);
             return grid[x, y];
         }
     }

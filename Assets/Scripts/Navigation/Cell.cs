@@ -1,7 +1,9 @@
+using System;
 using UnityEngine;
 
 namespace WarOfTanks.Nav
 {
+    [Serializable]
     public class Cell
     {
         public Vector3 worldPos;
