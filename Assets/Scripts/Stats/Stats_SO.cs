@@ -15,6 +15,7 @@ namespace WarOfTanks.Stats
         [Header("Combat")]
         public int attackDamage;
         public float attackRange;
+        public float fireRate = 1f;
         public float visionRange;
     }
 }
