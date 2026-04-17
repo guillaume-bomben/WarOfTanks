@@ -1,4 +1,5 @@
 using UnityEngine;
+using WarOfTanks.MapGen;
 using WarOfTanks.Stats;
 
 namespace WarOfTanks
@@ -48,6 +49,18 @@ namespace WarOfTanks
         {
             if (stats.maxHealth <= 0) return 0;
             return currentHealth / stats.maxHealth;
+        }
+        
+        void ApplyTerrainEffect()
+        {
+            TerrainDataModifier mod = GameManager.Instance.mapGenerator.GetModifierAtWorldPos(transform.position);
+            if (mod == null) 
+                return;
+            
+            foreach (var statMod in mod.modifiers)
+            {
+                // stats.ApplyModifier(statMod);
+            }
         }
     }
 }

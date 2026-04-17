@@ -18,4 +18,21 @@ namespace WarOfTanks.Stats
         public float fireRate = 1f;
         public float visionRange;
     }
+
+    public enum StatsEnum
+    {
+        Health,
+        MaxHealth,
+        MoveSpeed,
+        AttackDamage,
+        AttackRange,
+        VisionRange
+    }
+
+    public enum StatsModifier
+    {
+        Flat,
+        Percent,
+        Override
+    }
 }

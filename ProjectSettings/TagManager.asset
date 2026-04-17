@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Tank
+  - Walkable
+  - Unwalkable
+  - Hazard
   layers:
   - Default
   - TransparentFX
