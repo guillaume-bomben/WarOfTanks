@@ -10,6 +10,7 @@ namespace WarOfTanks.Nav
         public GridController gridController;
         public bool displayGrid;
 
+        public GridDirection.DirectionMode directionMode;
         public FlowFieldDisplayType curDisplayType;
 
         private Vector2Int gridSize;
@@ -26,10 +27,11 @@ namespace WarOfTanks.Nav
         public void SetFlowField(FlowField newFlowField)
         {
             curFlowField = newFlowField;
+            newFlowField.directionMode = directionMode;
             cellRadius = newFlowField.cellRadius;
             gridSize = newFlowField.gridSize;
         }
-        
+
         public void DrawFlowField()
         {
             ClearCellDisplay();
@@ -55,7 +57,6 @@ namespace WarOfTanks.Nav
             foreach (Cell curCell in curFlowField.grid)
             {
                 if (!IsInCameraView(curCell.worldPos)) continue;
-
                 DisplayCell(curCell);
             }
         }
@@ -74,8 +75,6 @@ namespace WarOfTanks.Nav
             iconGO.transform.parent = transform;
             iconGO.transform.position = cell.worldPos;
             iconSR.sortingOrder = 99;
-            CellDataDisplayer dataDisplayer = iconGO.AddComponent<CellDataDisplayer>();
-            dataDisplayer.SetCell(cell);
 
             Sprite originIcon       = ffIcons[0];
             Sprite unwalkableIcon   = ffIcons[1];

@@ -4,7 +4,6 @@ using UnityEngine.Tilemaps;
 
 namespace  WarOfTanks.MapGen
 {
-    // [ExecuteAlways]
     public class TilemapPerlinGenerator : MonoBehaviour
     {
         public bool autoUpdate = false;
