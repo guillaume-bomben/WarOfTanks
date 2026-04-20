@@ -12,6 +12,8 @@ namespace WarOfTanks.Nav
         public Cell destinationCell;
         public TilemapPerlinGenerator map;
 
+        public GridDirection.DirectionMode directionMode;
+
         private float cellDiameter;
         private Vector3 worldOffset;
 
@@ -60,6 +62,7 @@ namespace WarOfTanks.Nav
                         0
                     ) + worldOffset;
                     Vector3Int tilePos = map.worldMap.WorldToCell(worldPos);
+                    Cell currentCell = grid[x, y];
 
                     Cell currentCell = grid[x, y];
 
@@ -76,8 +79,8 @@ namespace WarOfTanks.Nav
                             TerrainDataModifier mod = map.GetModifierAtWorldPos(new Vector3(x, y));
                             if (mod != null)
                             {
-                                currentCell.IncreaseCost(2);
-                                
+                                currentCell.IncreaseCost(1);
+                                // Apply modifiers
                             }
                         }
                     }
@@ -85,9 +88,9 @@ namespace WarOfTanks.Nav
             }
         }
 
-        public void CreateIntegrationField(Cell _destinationCell)
+        public void CreateIntegrationField(Cell destination)
         {
-            destinationCell = _destinationCell;
+            destinationCell = destination;
 
             destinationCell.cost = 0;
             destinationCell.bestCost = 0;
@@ -98,15 +101,36 @@ namespace WarOfTanks.Nav
 
             while(cellsToCheck.Count > 0)
             {
-                Cell curCell = cellsToCheck.Dequeue();
-                List<Cell> curNeighbors = GetNeighborCells(curCell.gridIndex, GridDirection.CardinalAndIntercardinalDirections);
-                foreach (Cell curNeighbor in curNeighbors)
+                Cell currentCell = cellsToCheck.Dequeue();
+
+                GridDirection.Directions gridDirections;
+                switch (directionMode)
                 {
-                    if (curNeighbor.cost == byte.MaxValue) { continue; }
-                    if (curNeighbor.cost + curCell.bestCost < curNeighbor.bestCost)
+                    case GridDirection.DirectionMode.CardinalDirections:
+                        gridDirections = GridDirection.CardinalDirections;
+                        break;
+                    
+                    case GridDirection.DirectionMode.CardinalAndIntercardinalDirections:
+                        gridDirections = GridDirection.CardinalAndIntercardinalDirections;
+                        break;
+                    
+                    case GridDirection.DirectionMode.AllDirections:
+                        gridDirections = GridDirection.AllDirections;
+                        break;
+                    
+                    default:
+                        gridDirections = GridDirection.AllDirections;
+                        break;
+                }
+
+                List<Cell> currentNeighbors = GetNeighborCells(currentCell.gridIndex, gridDirections);
+                foreach (Cell neighbor in currentNeighbors)
+                {
+                    if (neighbor.cost == byte.MaxValue) { continue; }
+                    if (neighbor.cost + currentCell.bestCost < neighbor.bestCost)
                     {
-                        curNeighbor.bestCost = (ushort)(curNeighbor.cost + curCell.bestCost);
-                        cellsToCheck.Enqueue(curNeighbor);
+                        neighbor.bestCost = (ushort)(neighbor.cost + currentCell.bestCost);
+                        cellsToCheck.Enqueue(neighbor);
                     }
                 }
             }

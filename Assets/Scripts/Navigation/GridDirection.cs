@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -79,6 +80,16 @@ namespace WarOfTanks.Nav
             else if (this == SouthEast) return "South-East";
             else if (this == SouthWest) return "South-West";
             else                        return "None";
+        }
+
+
+
+        // For serialization purposes
+        public enum DirectionMode
+        {
+            CardinalDirections,
+            CardinalAndIntercardinalDirections,
+            AllDirections
         }
     }
 }
