@@ -93,6 +93,7 @@ namespace  WarOfTanks.MapGen
                     {
                         case TerrainRuleTile.TerrainKind.Water:
                             waterMap.SetTile(pos, terrain.ruleTile);
+                            unwalkableMap.SetTile(pos, terrain.ruleTile);
                             break;
                         
                         case TerrainRuleTile.TerrainKind.Sand:

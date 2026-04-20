@@ -61,21 +61,23 @@ namespace WarOfTanks.Nav
                     ) + worldOffset;
                     Vector3Int tilePos = map.worldMap.WorldToCell(worldPos);
 
+                    Cell currentCell = grid[x, y];
+
                     if (map.unwalkableMap.HasTile(tilePos) || map.waterMap.HasTile(tilePos))
                     {
-                        grid[x, y].cost = byte.MaxValue;
+                        currentCell.cost = byte.MaxValue;
                     }
                     else
                     {
-                        grid[x, y].IncreaseCost(1);
+                        currentCell.IncreaseCost(1);
                         
                         if (map.hazardMap.HasTile(tilePos))
                         {
                             TerrainDataModifier mod = map.GetModifierAtWorldPos(new Vector3(x, y));
                             if (mod != null)
                             {
-                                grid[x, y].IncreaseCost(1);
-                                // Apply modifiers
+                                currentCell.IncreaseCost(2);
+                                
                             }
                         }
                     }

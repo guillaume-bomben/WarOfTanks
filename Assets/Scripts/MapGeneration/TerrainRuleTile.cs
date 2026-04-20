@@ -17,7 +17,8 @@ namespace WarOfTanks.MapGen
             Water,
             Sand,
             Grass,
-            Rock
+            Rock,
+            Swamp
         }
 
 
