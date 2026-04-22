@@ -5,6 +5,7 @@ namespace WarOfTanks
     public class Tank : Unit
     {
         private Transform bodyTransform, headTransform;
+        public Team team;
 
         // Start is called before the first frame update
         void Start()
