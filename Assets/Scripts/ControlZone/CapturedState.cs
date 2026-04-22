@@ -27,8 +27,11 @@ namespace WarOfTanks
             {
                 // Reset timeout timer
                 emptyTimer = 0f;
-                // TODO: Marquer des points pour l'équipe (zone.capturingTeam)
-                // ScoreManager.Instance.AddScore(zone.capturingTeam, pointsPerSecond * Time.deltaTime);
+                // Marquer des points pour l'équipe (zone.capturingTeam)
+                if (ScoreManager.Instance != null)
+                {
+                    ScoreManager.Instance.AddScore(zone.capturingTeam, zone.pointsPerSecond * Time.deltaTime);
+                }
             }
             else if (zone.IsEmpty())
             {

@@ -17,6 +17,9 @@ namespace WarOfTanks
         [Tooltip("Time in seconds before the gauge starts emptying when a captured zone is left unattended")]
         public float emptyTimeout = 5f;
 
+        [Tooltip("Points generated per second when the zone is captured")]
+        public float pointsPerSecond = 5f;
+
         [Header("State Info (Read Only)")]
         [Range(0f, 1f)]
         public float captureProgress = 0f;
