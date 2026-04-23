@@ -13,13 +13,13 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(2))
         {
             lastMousePos = Input.mousePosition;
             isDragging = true;
         }
 
-        if (Input.GetMouseButtonUp(1))
+        if (Input.GetMouseButtonUp(2))
         {
             isDragging = false;
         }

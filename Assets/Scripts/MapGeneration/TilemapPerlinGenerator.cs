@@ -6,10 +6,12 @@ namespace  WarOfTanks.MapGen
 {
     public class TilemapPerlinGenerator : MonoBehaviour
     {
+        public TileInfoPopup popup;
+
         public bool autoUpdate = false;
 
         [Header("Noise Settings")]
-        [Range(1, 8)]   public int octaves = 4;
+        [Range(1, 8)]   public int octaves = 2;
         [Range(1f, 4f)] public float lacunarity = 2f;
         [Range(0f, 1f)] public float persistance = 0.5f;
                         public int seed;
@@ -38,6 +40,68 @@ namespace  WarOfTanks.MapGen
         float[,] heightMap;
         TerrainDataModifier[,] modifierMap;
 
+
+        void Update()
+        {
+            if (Input.GetMouseButtonDown(1))
+            {
+                HandleRightClick();
+            }
+            else if (Input.GetMouseButtonDown(0))
+            {
+                popup.Hide();
+            }
+        }
+
+        void HandleRightClick()
+        {
+            Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3Int cellPos = worldMap.WorldToCell(mouseWorld);
+
+            TileBase tile = worldMap.GetTile(cellPos);
+
+            if (tile == null) return;
+
+            TerrainRuleTile terrainTile = tile as TerrainRuleTile;
+
+            if (terrainTile != null)
+            {
+                ShowPopup(terrainTile, cellPos);
+            }
+        }
+
+        void ShowPopup(TerrainRuleTile tile, Vector3Int pos)
+        {
+            string info = "";
+            info += $"Terrain: {tile.name.Replace("RuleTile", "")}\n";
+            info += $"Walkable: {tile.isWalkable}\n";
+            info += $"Hazard: {tile.isHazard}\n";
+
+            if (tile.modifier != null)
+            {
+                info += "Modifier(s):\n";
+                foreach (var mod in tile.modifier.modifiers)
+                {
+                    switch (mod.modifier)
+                    {
+                        case Stats.StatsModifier.Flat:
+                            info += $"• {mod.statType} {mod.value:+0;-0}\n";
+                            break;
+
+                        case Stats.StatsModifier.Percent:
+                            info += $"• {mod.statType} {mod.value:+0;-0}%\n";
+                            break;
+
+                        case Stats.StatsModifier.Override:
+                            info += $"• {mod.statType} = {mod.value:-0;0}\n";
+                            break;
+                    }
+                }
+            }
+
+            Vector3 screenPos = Camera.main.WorldToScreenPoint(worldMap.GetCellCenterWorld(pos));
+            popup.Show(info, screenPos);
+        }
 
         // Génération de la map
         public void GenerateMap()
@@ -85,14 +149,13 @@ namespace  WarOfTanks.MapGen
                     Vector3Int pos = new Vector3Int(x - offsetX, y - offsetY, 0);
                     int currentLevel = GetLevel(heightMap[x, y]);
                     TerrainData terrain = terrains[currentLevel];
-                    modifierMap[x, y] = terrain.modifier;
+                    modifierMap[x, y] = terrain.ruleTile.modifier;
                     terrain.SetWorldPos(new Vector3(x, y));
 
                     switch (terrain.ruleTile.terrainKind)
                     {
                         case TerrainRuleTile.TerrainKind.Water:
                             waterMap.SetTile(pos, terrain.ruleTile);
-                            unwalkableMap.SetTile(pos, terrain.ruleTile);
                             break;
                         
                         case TerrainRuleTile.TerrainKind.Sand:
@@ -108,7 +171,7 @@ namespace  WarOfTanks.MapGen
                             break;
                     }
 
-                    if (terrain.isHazard)
+                    if (terrain.ruleTile.isHazard)
                         hazardMap.SetTile(pos, terrain.ruleTile);
                     
                     worldMap.SetTile(pos, terrain.ruleTile);
@@ -138,7 +201,7 @@ namespace  WarOfTanks.MapGen
 
                 float perlin = Mathf.PerlinNoise(sampleX, sampleY) * 2f - 1f;
 
-                noiseHeight =+ perlin * amp;
+                noiseHeight += perlin * amp;
                 maxValue += amp;
                 amp *= persistance;
                 freq *= lacunarity;
@@ -160,41 +223,6 @@ namespace  WarOfTanks.MapGen
             return terrains.Length - 1;
         }
 
-        /*
-        bool TryGetSlope(int x, int y, int currentLevel, out TileBase slopeTile)
-        {
-            slopeTile = null;
-
-            Vector2Int[] directions =
-            {
-                Vector2Int.up,
-                Vector2Int.down,
-                Vector2Int.left,
-                Vector2Int.right
-            };
-
-            foreach (var dir in directions)
-            {
-                int nx = x + dir.x;
-                int ny = y + dir.y;
-
-                if (!InBounds(nx, ny))
-                    continue;
-
-                int neighborLevel = GetLevel(heightMap[nx, ny]);
-
-                // pente uniquement si différence de 1 niveau
-                if (Mathf.Abs(neighborLevel - currentLevel) == 1 && (Mathf.Abs(heightMap[nx, ny] - heightMap[x, y]) > 0.1f))
-                {
-                    slopeTile = GetSlopeTile(dir);
-                    return true;
-                }
-            }
-
-            return false;
-        }
-        */
-
         bool InBounds(int x, int y)
         {
             return x >= 0 && y >= 0 && x < width && y < height;
@@ -212,27 +240,15 @@ namespace  WarOfTanks.MapGen
             return modifierMap[x, y];
         }
 
-        /*
-        // récupère une tile "pente" en fonction de la direction
-        TileBase GetSlopeTile(Vector2Int dir)
-        {
-            if (dir == Vector2Int.up || dir == Vector2Int.down)
-                return verticalSlope;
-
-            if (dir == Vector2Int.left || dir == Vector2Int.right)
-                return horizontalSlope;
-        
-            return verticalSlope;
-        }
-        */
-
-        float AppyFalloff(int x, int y)
+        public float AppyFalloff(int x, int y)
         {
             float nx = Mathf.Abs((float)x / width * 2f - 1f);
             float ny = Mathf.Abs((float)y / width * 2f - 1f);
             float dist = Mathf.Max(nx, ny);
             return falloffCurve.Evaluate(dist);
         }
+
+        public float[,] GetHeightMap() => heightMap;
     }
 }
 

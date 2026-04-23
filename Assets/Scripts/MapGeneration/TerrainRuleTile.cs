@@ -4,13 +4,15 @@ using UnityEngine.Tilemaps;
 
 namespace WarOfTanks.MapGen
 {
-    [CreateAssetMenu(menuName = "War Of Tanks/Create new Custom Rule Tile")]
+    [CreateAssetMenu(menuName = "War Of Tanks/Rule Tiles/Create new Custom Rule Tile")]
     public class TerrainRuleTile : RuleTile<RuleTile.TilingRule.Neighbor>
     {
-        // public bool checkSelf;
-        // public bool alwaysConnect;
-        // public TileBase[] tilesToConnect;
         public TerrainKind terrainKind;
+        public TerrainDataModifier modifier;
+
+        public bool isMountain;
+        public bool isWalkable;
+        public bool isHazard;
 
         public enum TerrainKind
         {
