@@ -103,7 +103,7 @@ namespace WarOfTanks
 
         public bool IsConflict()
         {
-            return GetTeamCount(Team.Team1) > 0 && GetTeamCount(Team.Team2) > 0;
+            return GetTeamCount(Team.Red) > 0 && GetTeamCount(Team.Blue) > 0;
         }
 
         public bool IsEmpty()
@@ -115,8 +115,8 @@ namespace WarOfTanks
 
         public Team GetDominantTeam()
         {
-            if (GetTeamCount(Team.Team1) > 0 && GetTeamCount(Team.Team2) == 0) return Team.Team1;
-            if (GetTeamCount(Team.Team2) > 0 && GetTeamCount(Team.Team1) == 0) return Team.Team2;
+            if (GetTeamCount(Team.Red) > 0 && GetTeamCount(Team.Blue) == 0) return Team.Red;
+            if (GetTeamCount(Team.Blue) > 0 && GetTeamCount(Team.Red) == 0) return Team.Blue;
             return Team.None;
         }
     }

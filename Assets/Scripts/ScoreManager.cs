@@ -36,24 +36,24 @@ namespace WarOfTanks
         {
             if (gameOver || team == Team.None) return;
 
-            if (team == Team.Team1)
+            if (team == Team.Red)
             {
                 team1Score += points;
                 OnScoreChanged?.Invoke(team, team1Score);
                 
                 if (team1Score >= scoreToWin)
                 {
-                    TriggerWin(Team.Team1);
+                    TriggerWin(Team.Red);
                 }
             }
-            else if (team == Team.Team2)
+            else if (team == Team.Blue)
             {
                 team2Score += points;
                 OnScoreChanged?.Invoke(team, team2Score);
 
                 if (team2Score >= scoreToWin)
                 {
-                    TriggerWin(Team.Team2);
+                    TriggerWin(Team.Blue);
                 }
             }
         }
