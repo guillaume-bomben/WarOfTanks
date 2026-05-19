@@ -1,10 +1,19 @@
 using System.Collections.Generic;
 using UnityEngine;
+using WarOfTanks.Nav;
 
 namespace WarOfTanks
 {
+    /// <summary>
+    /// Sélection RTS + ordres de déplacement/attaque.
+    /// Sur clic droit sol → construit un Flow Field partagé et l'envoie
+    /// à tous les tanks sélectionnés.
+    /// </summary>
     public class TankSelector : MonoBehaviour
     {
+        [Header("Références")]
+        public GridController gridController; // assigné dans l'Inspector
+
         [Header("Sélection")]
         public float dragThreshold = 0.2f;
 
@@ -31,7 +40,7 @@ namespace WarOfTanks
 
         void OnLeftClickDown()
         {
-            dragStart = MouseWorldPos();
+            dragStart  = MouseWorldPos();
             isDragging = false;
         }
 
@@ -57,21 +66,19 @@ namespace WarOfTanks
             if (tank == null) return;
 
             if (Input.GetKey(KeyCode.LeftShift))
-                AddToSelection(tank);   // Maj → ajouter
+                AddToSelection(tank);
             else
                 Select(tank);
         }
 
         void SelectInRect()
         {
-            // Rectangle entre dragStart et position actuelle
             Vector2 end = MouseWorldPos();
             Vector2 min = Vector2.Min(dragStart, end);
             Vector2 max = Vector2.Max(dragStart, end);
 
             DeselectAll();
 
-            // Cherche tous les tanks dans le rectangle
             foreach (Tank tank in FindObjectsOfType<Tank>())
             {
                 Vector2 pos = tank.transform.position;
@@ -87,46 +94,74 @@ namespace WarOfTanks
         {
             if (selectedTanks.Count == 0) return;
 
+            Vector2 mousePos = MouseWorldPos();
+
             if (Input.GetKey(KeyCode.A))
             {
-                // A + clic droit → attaquer une zone
-                AttackZone(MouseWorldPos());
+                // A + clic droit → attaquer une zone (stub, sera implémenté avec A-04)
+                AttackZone(mousePos);
+                return;
+            }
+
+            Tank enemy = RaycastTank();
+
+            if (enemy != null && !IsInSelection(enemy))
+            {
+                // Clic sur un ennemi → ordre d'attaque (stub)
+                AttackTarget(enemy);
             }
             else
             {
-                Tank enemy = RaycastTank();
-
-                if (enemy != null && !selectedTanks.Contains(enemy))
-                    AttackTarget(enemy);    // Ennemi ciblé → attaquer
-                else
-                    MoveAll(MouseWorldPos());
+                // Clic sur le sol → déplacement via Flow Field
+                MoveAllWithFlowField(mousePos);
             }
         }
 
-        // ── Commandes ────────────────────────────────────────────────────
+        // ── Commandes de déplacement ─────────────────────────────────────
 
-        void MoveAll(Vector2 destination)
+        /// <summary>
+        /// Construit UN seul Flow Field partagé vers la destination,
+        /// puis le distribue à tous les tanks sélectionnés.
+        /// Chaque tank suit le champ depuis SA position → chemins distincts.
+        /// La séparation (dans TankMovement) évite les bousculades.
+        /// </summary>
+        void MoveAllWithFlowField(Vector2 destination)
         {
+            if (gridController == null)
+            {
+                Debug.LogError("TankSelector : GridController non assigné !");
+                return;
+            }
+
+            // Un seul calcul pour tous les tanks
+            FlowField field = gridController.RequestFlowField(destination);
+
             foreach (Tank tank in selectedTanks)
-                tank.GetComponent<TankMovement>().MoveTo(destination);
+            {
+                TankMovement movement = tank.GetComponent<TankMovement>();
+                if (movement != null)
+                    movement.MoveWithFlowField(field, destination);
+            }
         }
 
         void AttackTarget(Tank enemy)
         {
+            // TODO A-04 : ordre "Attaquer" — le tank se positionne à portée puis tire
             foreach (Tank tank in selectedTanks)
-                tank.GetComponent<TankShooting>().Shoot();
+                tank.GetComponent<TankShooting>()?.Shoot();
         }
 
         void AttackZone(Vector2 point)
         {
+            // TODO A-04 : ordre "Attaquer une zone"
             foreach (Tank tank in selectedTanks)
-                tank.GetComponent<TankShooting>().Shoot();
+                tank.GetComponent<TankShooting>()?.Shoot();
         }
 
         void StopAll()
         {
             foreach (Tank tank in selectedTanks)
-                tank.GetComponent<TankMovement>().Stop();
+                tank.GetComponent<TankMovement>()?.Stop();
         }
 
         // ── Sélection ────────────────────────────────────────────────────
@@ -151,14 +186,14 @@ namespace WarOfTanks
             selectedTanks.Clear();
         }
 
+        bool IsInSelection(Tank tank) => selectedTanks.Contains(tank);
+
         // ── Utilitaires ──────────────────────────────────────────────────
 
         Tank RaycastTank()
         {
             RaycastHit2D hit = Physics2D.Raycast(MouseWorldPos(), Vector2.zero);
-            if (hit.collider != null)
-                return hit.collider.GetComponentInParent<Tank>();
-            return null;
+            return hit.collider?.GetComponentInParent<Tank>();
         }
 
         Vector2 MouseWorldPos()

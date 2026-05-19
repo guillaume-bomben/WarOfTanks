@@ -350,8 +350,6 @@ GameObject:
   - component: {fileID: 487739056}
   - component: {fileID: 487739057}
   - component: {fileID: 487739058}
-  - component: {fileID: 7038439477340124733}
-  - component: {fileID: 1717107832869993913}
   m_Layer: 0
   m_Name: Tank
   m_TagString: Tank
@@ -482,32 +480,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &7038439477340124733
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5347767115568449757}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82b0daaeced67de43a6bac75389c85ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bulletPrefab: {fileID: 1537632179644896656, guid: fbd4c4d527cb3fc4599a16abf6d68c6a, type: 3}
-  firePoint: {fileID: 0}
---- !u!114 &1717107832869993913
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5347767115568449757}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92fba62b818d59340958882622fe0954, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &5459367499970536804
 GameObject:
   m_ObjectHideFlags: 0
