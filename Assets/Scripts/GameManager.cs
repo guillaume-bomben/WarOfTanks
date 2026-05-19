@@ -5,9 +5,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-
     public TilemapPerlinGenerator mapGenerator;
-
+    public Player player;
 
     void Awake()
     {

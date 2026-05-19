@@ -10,6 +10,7 @@
     "com.unity.ide.vscode": "1.2.5",
     "com.unity.textmeshpro": "3.0.9",
     "com.unity.modules.tilemap": "1.0.0",
-    "com.unity.2d.tilemap.extras": "file:Pakcages/2d-extras-2020.3"
+    "com.unity.2d.tilemap.extras": "file:Packages/2d-extras-2020.3",
+    "com.unity.modules.unitywebrequest": "1.0.0"
   }
 }
