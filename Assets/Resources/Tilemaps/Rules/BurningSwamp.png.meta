@@ -56,6 +56,12 @@ TextureImporter:
   - first:
       213: 9097620699827948325
     second: BurningSwamp_17
+  - first:
+      213: 531385561749047546
+    second: BurningSwamp_18
+  - first:
+      213: 4332602916089388982
+    second: BurningSwamp_19
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -100,7 +106,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 10
+  spritePixelsToUnits: 15
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -162,7 +168,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 32
+        y: 64
         width: 16
         height: 16
       alignment: 0
@@ -183,7 +189,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 16
-        y: 32
+        y: 64
         width: 16
         height: 16
       alignment: 0
@@ -204,7 +210,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 32
-        y: 32
+        y: 64
         width: 16
         height: 16
       alignment: 0
@@ -225,7 +231,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 48
-        y: 32
+        y: 64
         width: 16
         height: 16
       alignment: 0
@@ -246,7 +252,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 64
-        y: 32
+        y: 64
         width: 16
         height: 16
       alignment: 0
@@ -267,7 +273,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 80
-        y: 32
+        y: 64
         width: 16
         height: 16
       alignment: 0
@@ -288,7 +294,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 16
+        y: 48
         width: 16
         height: 16
       alignment: 0
@@ -309,7 +315,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 16
-        y: 16
+        y: 48
         width: 16
         height: 16
       alignment: 0
@@ -330,7 +336,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 32
-        y: 16
+        y: 48
         width: 16
         height: 16
       alignment: 0
@@ -351,7 +357,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 48
-        y: 16
+        y: 48
         width: 16
         height: 16
       alignment: 0
@@ -372,7 +378,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 64
-        y: 16
+        y: 48
         width: 16
         height: 16
       alignment: 0
@@ -393,7 +399,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 80
-        y: 16
+        y: 48
         width: 16
         height: 16
       alignment: 0
@@ -414,7 +420,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
+        y: 32
         width: 16
         height: 16
       alignment: 0
@@ -435,7 +441,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 16
-        y: 0
+        y: 32
         width: 16
         height: 16
       alignment: 0
@@ -456,7 +462,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 32
-        y: 0
+        y: 32
         width: 16
         height: 16
       alignment: 0
@@ -477,7 +483,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 48
-        y: 0
+        y: 32
         width: 16
         height: 16
       alignment: 0
@@ -498,7 +504,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 64
-        y: 0
+        y: 32
         width: 16
         height: 16
       alignment: 0
@@ -519,7 +525,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 80
-        y: 0
+        y: 32
         width: 16
         height: 16
       alignment: 0
@@ -531,6 +537,48 @@ TextureImporter:
       bones: []
       spriteID: 52b4c7243dd314e70800000000000000
       internalID: 9097620699827948325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BurningSwamp_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 16
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: af8c2de5a5cdf5700800000000000000
+      internalID: 531385561749047546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BurningSwamp_19
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 16
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6bf5456a56f702c30800000000000000
+      internalID: 4332602916089388982
       vertices: []
       indices: 
       edges: []
