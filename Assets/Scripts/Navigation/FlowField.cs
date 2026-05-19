@@ -72,13 +72,18 @@ namespace WarOfTanks.Nav
                     {
                         currentCell.IncreaseCost(1);
                         
+                        // Si c'est une hazardTile, on augmente le coût
                         if (map.hazardMap.HasTile(tilePos))
                         {
-                            TerrainDataModifier mod = map.GetModifierAtWorldPos(new Vector3(x, y));
-                            if (mod != null)
+                            currentCell.IncreaseCost(2);
+                            var mods = ((TerrainRuleTile)map.hazardMap.GetTile(tilePos)).modifier.modifiers;
+                            foreach (var mod in mods)
                             {
-                                currentCell.IncreaseCost(1);
-                                // Apply modifiers
+                                if (mod.statType == Stats.StatsEnum.Health && mod.value < 0)
+                                    currentCell.IncreaseCost(1);
+                                
+                                if (mod.statType == Stats.StatsEnum.MoveSpeed && mod.value < 0)
+                                    currentCell.IncreaseCost(1);
                             }
                         }
                     }

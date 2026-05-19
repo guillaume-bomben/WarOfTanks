@@ -59,7 +59,7 @@ namespace WarOfTanks
             
             foreach (var statMod in mod.modifiers)
             {
-                // stats.ApplyModifier(statMod);
+                stats.ApplyModifier(statMod);
             }
         }
     }

@@ -8,14 +8,8 @@ namespace WarOfTanks.MapGen
         public string name;
 
         public TerrainRuleTile ruleTile;
-        public TerrainDataModifier modifier;
         [Range(0f, 1f)]
         public float height;
-
-
-        public bool isWalkable;
-        public bool isHazard;
-
 
         Vector3 worldPos;
 
