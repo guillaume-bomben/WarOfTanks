@@ -74,3 +74,28 @@ export const getMatches = async (req, res) => {
         });
     }
 };
+export const getMatchHistory = async (req, res) => {
+  try {
+
+    const { playerId } = req.params;
+
+    const matches = await Match.find({
+      $or: [
+        { playerA: playerId },
+        { playerB: playerId }
+      ]
+    })
+      .populate("playerA", "username")
+      .populate("playerB", "username")
+      .populate("winner", "username")
+      .sort({ playedAt: -1 });
+
+    res.json(matches);
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message
+    });
+  }
+};
