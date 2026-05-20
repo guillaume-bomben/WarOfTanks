@@ -27,7 +27,7 @@ namespace WarOfTanks.API
             };
             string body = JsonUtility.ToJson(data);
             byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(body);
-            Debug.Log(body);
+            // Debug.Log(body);
 
             UnityWebRequest req = new UnityWebRequest(url, "POST");
             req.SetRequestHeader("Content-Type", "application/json");
@@ -40,7 +40,9 @@ namespace WarOfTanks.API
                 Debug.Log($"API Error: {req.error}");
 
             API.Player player = JsonUtility.FromJson<API.Player>(req.downloadHandler.text);
-            Debug.Log(player.score); 
+            // Debug.Log(player.score); 
+
+            GameManager.Instance.loggedPlayer = player;
         }
 
         [System.Serializable]

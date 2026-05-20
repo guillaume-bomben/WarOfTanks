@@ -8,7 +8,7 @@ namespace WarOfTanks
         public static GameManager Instance;
 
         public TilemapPerlinGenerator mapGenerator;
-        [HideInInspector] public API.Player player;
+        [HideInInspector] public API.Player loggedPlayer;
 
         void Awake()
         {
