@@ -1,23 +1,26 @@
 using UnityEngine;
 using WarOfTanks.MapGen;
 
-public class GameManager : MonoBehaviour
-{
-    public static GameManager Instance;
-
-    public TilemapPerlinGenerator mapGenerator;
-    public Player player;
-
-    void Awake()
+namespace WarOfTanks
+{   
+    public class GameManager : MonoBehaviour
     {
-        if (Instance == null)
+        public static GameManager Instance;
+
+        public TilemapPerlinGenerator mapGenerator;
+        [HideInInspector] public API.Player player;
+
+        void Awake()
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

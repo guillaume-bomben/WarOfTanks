@@ -2,27 +2,52 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class ApiHandler : MonoBehaviour
+namespace WarOfTanks.API
 {
-    const string URL = "http://localhost:5000/";
-
-    [SerializeField] string username;
-    [SerializeField] string email;
-    [SerializeField] string password;
-
-
-    public void Connect()
+    public class ApiHandler : MonoBehaviour
     {
-        StartCoroutine(Login());
-    }
+        const string URL = "http://localhost:5000/api/auth/login";
 
-    private IEnumerator Login()
-    {
-        using (UnityWebRequest req = UnityWebRequest.Get(URL))
+        [SerializeField] string username = "Thibault";
+        [SerializeField] string email = "thibault.kine@laplateforme.io";
+        [SerializeField] string password = "azerty";
+
+
+        public void Connect()
         {
-            yield return req.SendWebRequest();
+            StartCoroutine(Login(URL));
         }
 
-        // GameManager.Instance.player = player;
+        private IEnumerator Login(string url)
+        {
+            var data = new LoginRequest
+            {
+                email = email,
+                password = password
+            };
+            string body = JsonUtility.ToJson(data);
+            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(body);
+            Debug.Log(body);
+
+            UnityWebRequest req = new UnityWebRequest(url, "POST");
+            req.SetRequestHeader("Content-Type", "application/json");
+            req.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            req.downloadHandler = new DownloadHandlerBuffer();
+
+            yield return req.SendWebRequest();
+
+            if (req.result != UnityWebRequest.Result.Success)
+                Debug.Log($"API Error: {req.error}");
+
+            API.Player player = JsonUtility.FromJson<API.Player>(req.downloadHandler.text);
+            Debug.Log(player.score); 
+        }
+
+        [System.Serializable]
+        public struct LoginRequest
+        {
+            public string email;
+            public string password;
+        }
     }
 }

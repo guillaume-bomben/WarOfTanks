@@ -1,10 +1,11 @@
-using TMPro;
+// using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TileInfoPopup : MonoBehaviour
 {
     public GameObject panel;
-    public TMP_Text text;
+    public /*TMP_*/Text text;
 
 
     public void Show(string content, Vector3 screenPos)

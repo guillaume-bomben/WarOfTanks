@@ -1,5 +1,6 @@
-using TMPro;
 using UnityEngine;
+// using TMPro;
+using UnityEngine.UI;
 
 namespace WarOfTanks.Cosmetics
 {
@@ -9,7 +10,7 @@ namespace WarOfTanks.Cosmetics
         public Color color = Color.white;
 
         private SpriteRenderer headSR, bodySR;
-        private TextMeshPro textMesh;
+        private Text textMesh;
 
         void Start()
         {
@@ -50,7 +51,7 @@ namespace WarOfTanks.Cosmetics
         }
         void InitNameText()
         {
-            textMesh = transform.Find("Name").GetComponent<TextMeshPro>();
+            textMesh = transform.Find("Name").GetComponent<Text/*MeshPro*/>();
             if (textMesh != null)
                 textMesh.text = GetComponent<Unit>().name;
         }
