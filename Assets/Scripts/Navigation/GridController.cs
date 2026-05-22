@@ -6,36 +6,43 @@ namespace WarOfTanks.Nav
 {
     public class GridController : MonoBehaviour
     {
-        public Vector2Int gridSize;
+        [Header("Flow Field")]
         public float cellRadius = 0.5f;
-        public FlowField curFlowField;
-        public GridDebug gridDebug;
         public TilemapPerlinGenerator map;
 
-        private void InitializeFlowField()
-        {
-            curFlowField = new FlowField(cellRadius, gridSize, map);
-            curFlowField.CreateGrid();
-            gridDebug.SetFlowField(curFlowField);
-        }
+        [Header("Debug")]
+        public GridDebug gridDebug;
 
-        private void Update()
+        public FlowField CurrentFlowField { get; private set; }
+
+        /// <summary>Exposé pour GridDebug (compatibilité)</summary>
+        public Vector2Int gridSize => CurrentFlowField != null
+            ? CurrentFlowField.gridSize
+            : (map != null ? new Vector2Int(map.width, map.height) : Vector2Int.zero);
+
+        // ── API publique ─────────────────────────────────────────────────
+
+        public FlowField RequestFlowField(Vector3 worldDestination)
         {
-            if (Input.GetMouseButtonDown(0))
+            // Reconstruit la grille à chaque demande
+            // (on peut optimiser en ne reconstruisant le cost field qu'une fois si la map ne change pas)
+            CurrentFlowField = new FlowField(cellRadius, Vector2Int.zero, map);
+            CurrentFlowField.CreateGrid();
+            CurrentFlowField.CreateCostField();
+
+            Cell destinationCell = CurrentFlowField.GetCellFromWorldPos(worldDestination);
+            CurrentFlowField.CreateIntegrationField(destinationCell);
+            CurrentFlowField.CreateFlowField();
+
+            // Mise à jour du debug visuel
+            if (gridDebug != null)
             {
-                InitializeFlowField();
-
-                curFlowField.CreateCostField();
-
-                Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f);
-                Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(mousePos);
-                Cell destinationCell = curFlowField.GetCellFromWorldPos(worldMousePos);
-                
-                curFlowField.CreateIntegrationField(destinationCell);
-                curFlowField.CreateFlowField();
-
+                gridDebug.SetFlowField(CurrentFlowField);
                 gridDebug.DrawFlowField();
             }
+
+            return CurrentFlowField;
         }
+
     }
 }

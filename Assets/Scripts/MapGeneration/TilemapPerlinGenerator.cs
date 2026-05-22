@@ -47,10 +47,10 @@ namespace  WarOfTanks.MapGen
             {
                 HandleRightClick();
             }
-            else if (Input.GetMouseButtonDown(0))
-            {
-                popup.Hide();
-            }
+            //else if (Input.GetMouseButtonDown(0))
+            //{
+            //    popup.Hide();
+            //}
         }
 
         void HandleRightClick()
@@ -64,10 +64,10 @@ namespace  WarOfTanks.MapGen
 
             TerrainRuleTile terrainTile = tile as TerrainRuleTile;
 
-            if (terrainTile != null)
-            {
-                ShowPopup(terrainTile, cellPos);
-            }
+            //if (terrainTile != null)
+            //{
+            //    ShowPopup(terrainTile, cellPos);
+            //}
         }
 
         void ShowPopup(TerrainRuleTile tile, Vector3Int pos)
