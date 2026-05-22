@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 using WarOfTanks.MapGen;
 
 namespace WarOfTanks.Nav
@@ -11,67 +9,81 @@ namespace WarOfTanks.Nav
         public Cell[,] grid { get; private set; }
         public Vector2Int gridSize { get; private set; }
         public float cellRadius { get; private set; }
-
         public Cell destinationCell;
+        public TilemapPerlinGenerator map;
 
-        float cellDiameter;
+        public GridDirection.DirectionMode directionMode;
+
+        private float cellDiameter;
+        private Vector3 worldOffset;
 
 
-        public FlowField(float cellRadius, Vector2Int gridSize, TilemapPerlinGenerator mapGen = null)
+        public FlowField(float _cellRadius, Vector2Int _gridSize, TilemapPerlinGenerator _map)
         {
-            this.cellRadius = cellRadius;
-            this.gridSize = mapGen ? new Vector2Int(mapGen.width, mapGen.height) : gridSize;
-            this.cellDiameter = cellRadius * 2f;
-        }
-
-        public void CreateFlowField()
-        {
-            foreach (Cell c in grid)
-            {
-                List<Cell> currNeighbors = GetNeighborCells(c.gridIndex, GridDirection.AllDirections);
-                int bestCost = c.bestCost;
-
-                foreach (Cell neighbor in currNeighbors)
-                {
-                    if (neighbor.bestCost < bestCost)
-                    {
-                        bestCost = neighbor.bestCost;
-                        c.bestDirection = GridDirection.GetDirectionFromV2I(neighbor.gridIndex - c.gridIndex);
-                    }
-                }
-            }
-        }
-
-        public void CreateGrid(TilemapPerlinGenerator mapGen)
-        {
-            grid = new Cell[gridSize.x, gridSize.y];
-            Vector3 worldOffset = new Vector3(
+            cellRadius = _cellRadius;
+            cellDiameter = cellRadius * 2f;
+            map = _map;
+            gridSize = _map != null ? new Vector2Int(_map.width, _map.height) : _gridSize;
+        
+            worldOffset = new Vector3(
                 -gridSize.x * cellDiameter / 2f, 
                 -gridSize.y * cellDiameter / 2f, 
                 0
             );
+        }
+
+        public void CreateGrid()
+        {
+            grid = new Cell[gridSize.x, gridSize.y];
 
             for (int x = 0; x < gridSize.x; x++)
             {
                 for (int y = 0; y < gridSize.y; y++)
                 {
-                    Vector3 worldPos = new Vector3(cellDiameter * x + cellRadius, cellDiameter * y + cellRadius, 0) + worldOffset;
-                    Cell currentCell = new Cell(worldPos, new Vector2Int(x, y));
-                    grid[x, y] = currentCell;
-                    Vector3Int tilePos = mapGen.worldMap.WorldToCell(worldPos);
+                    Vector3 worldPos = new Vector3(
+                        cellDiameter * x + cellRadius, 
+                        cellDiameter * y + cellRadius,
+                        0 
+                    ) + worldOffset;
+                    grid[x, y] = new Cell(worldPos, new Vector2Int(x, y));
+                }
+            }
+        }
 
-                    if (mapGen.unwalkableMap.HasTile(tilePos) || mapGen.waterMap.HasTile(tilePos))
-                        currentCell.IncreaseCost(byte.MaxValue);
+        public void CreateCostField()
+        {
+            for (int x = 0; x < gridSize.x; x++)
+            {
+                for (int y = 0; y < gridSize.y; y++)
+                {
+                    Vector3 worldPos = new Vector3(
+                        cellDiameter * x + cellRadius,
+                        cellDiameter * y + cellRadius,
+                        0
+                    ) + worldOffset;
+                    Vector3Int tilePos = map.worldMap.WorldToCell(worldPos);
+                    Cell currentCell = grid[x, y];
+
+                    if (map.unwalkableMap.HasTile(tilePos) || map.waterMap.HasTile(tilePos))
+                    {
+                        currentCell.cost = byte.MaxValue;
+                    }
                     else
                     {
                         currentCell.IncreaseCost(1);
-                        if (mapGen.hazardMap.HasTile(tilePos))
+                        
+                        // Si c'est une hazardTile, on augmente le coût
+                        if (map.hazardMap.HasTile(tilePos))
                         {
-                            TerrainDataModifier modifier = mapGen.GetModifierAtWorldPos(worldPos);
-                            if (modifier != null)
+                            currentCell.IncreaseCost(2);
+                            var mods = ((TerrainRuleTile)map.hazardMap.GetTile(tilePos)).modifier.modifiers;
+                            foreach (var mod in mods)
                             {
-                                // Apply modifier
-                                currentCell.IncreaseCost(10);
+                                if (mod.statType == Stats.StatsEnum.Health && mod.value < 0)
+                                    currentCell.IncreaseCost(1);
+                                
+                                if (mod.statType == Stats.StatsEnum.MoveSpeed && mod.value < 0)
+                                    currentCell.IncreaseCost(1);
                             }
                         }
                     }
@@ -79,68 +91,113 @@ namespace WarOfTanks.Nav
             }
         }
 
-        public void CreateIntegrationField(Cell destinationCell)
+        public void CreateIntegrationField(Cell destination)
         {
-            this.destinationCell = destinationCell;
-            this.destinationCell.cost = 0;
-            this.destinationCell.bestCost = 0;
+            destinationCell = destination;
+
+            destinationCell.cost = 0;
+            destinationCell.bestCost = 0;
 
             Queue<Cell> cellsToCheck = new Queue<Cell>();
-            cellsToCheck.Enqueue(this.destinationCell);
 
-            while (cellsToCheck.Count > 0)
+            cellsToCheck.Enqueue(destinationCell);
+
+            while(cellsToCheck.Count > 0)
             {
-                Cell c = cellsToCheck.Dequeue();
-                List<Cell> neighbors = GetNeighborCells(c.gridIndex, GridDirection.CardinalDirections);
-                foreach (Cell n in neighbors)
+                Cell currentCell = cellsToCheck.Dequeue();
+
+                GridDirection.Directions gridDirections;
+                switch (directionMode)
                 {
-                    if (n.cost == byte.MaxValue)
-                        continue;
+                    case GridDirection.DirectionMode.CardinalDirections:
+                        gridDirections = GridDirection.CardinalDirections;
+                        break;
                     
-                    if (n.cost + c.bestCost < n.bestCost)
+                    case GridDirection.DirectionMode.CardinalAndIntercardinalDirections:
+                        gridDirections = GridDirection.CardinalAndIntercardinalDirections;
+                        break;
+                    
+                    case GridDirection.DirectionMode.AllDirections:
+                        gridDirections = GridDirection.AllDirections;
+                        break;
+                    
+                    default:
+                        gridDirections = GridDirection.AllDirections;
+                        break;
+                }
+
+                List<Cell> currentNeighbors = GetNeighborCells(currentCell.gridIndex, gridDirections);
+                foreach (Cell neighbor in currentNeighbors)
+                {
+                    if (neighbor.cost == byte.MaxValue) { continue; }
+                    if (neighbor.cost + currentCell.bestCost < neighbor.bestCost)
                     {
-                        n.bestCost = (ushort)(n.cost + c.bestCost);
-                        cellsToCheck.Enqueue(n);
+                        neighbor.bestCost = (ushort)(neighbor.cost + currentCell.bestCost);
+                        cellsToCheck.Enqueue(neighbor);
                     }
                 }
             }
         }
 
-        List<Cell> GetNeighborCells(Vector2Int nodeIndex, GridDirection.Directions directions)
+        public void CreateFlowField()
         {
-            List<Cell> neighbors = new List<Cell>();
-
-            foreach (Vector2Int currDir in directions)
+            foreach(Cell curCell in grid)
             {
-                Cell newNeighbor = GetCellAtRelativePos(nodeIndex, currDir);
-                if (newNeighbor != null)
-                    neighbors.Add(newNeighbor);
-            }
+                List<Cell> curNeighbors = GetNeighborCells(curCell.gridIndex, GridDirection.AllDirections);
 
-            return neighbors;
+                int bestCost = curCell.bestCost;
+
+                foreach(Cell curNeighbor in curNeighbors)
+                {
+                    if(curNeighbor.bestCost < bestCost)
+                    {
+                        bestCost = curNeighbor.bestCost;
+                        curCell.bestDirection = GridDirection.GetDirectionFromV2I(curNeighbor.gridIndex - curCell.gridIndex);
+                        // Debug.Log($"Setting best direction. Neighbor = {curNeighbor.gridIndex} ; Current = {curCell.gridIndex}\nBest Dir = {curCell.bestDirection}");
+                    }
+                }
+            }
         }
 
-        Cell GetCellAtRelativePos(Vector2Int origin, Vector2Int relativePos)
+        private List<Cell> GetNeighborCells(Vector2Int nodeIndex, List<GridDirection> directions)
         {
-            Vector2Int finalPos = origin + relativePos;
+            List<Cell> neighborCells = new List<Cell>();
 
-            if (finalPos.x < 0 || finalPos.x >= gridSize.x ||
-                finalPos.y < 0 || finalPos.y >= gridSize.y
-            )   return null;
-            else
-                return grid[finalPos.x, finalPos.y];
+            foreach (Vector2Int curDirection in directions)
+            {
+                Cell newNeighbor = GetCellAtRelativePos(nodeIndex, curDirection);
+                if (newNeighbor != null)
+                {
+                    neighborCells.Add(newNeighbor);
+                }
+            }
+            return neighborCells;
+        }
+
+        private Cell GetCellAtRelativePos(Vector2Int orignPos, Vector2Int relativePos)
+        {
+            Vector2Int finalPos = orignPos + relativePos;
+
+            if (finalPos.x < 0 || finalPos.x >= gridSize.x || finalPos.y < 0 || finalPos.y >= gridSize.y)
+            {
+                return null;
+            }
+
+            else { return grid[finalPos.x, finalPos.y]; }
         }
 
         public Cell GetCellFromWorldPos(Vector3 worldPos)
         {
-            float percentX = worldPos.x / (gridSize.x * cellDiameter);
-            float percentY = worldPos.z / (gridSize.y * cellDiameter);
-    
+            Vector3 localPos = worldPos - worldOffset;
+
+            float percentX = localPos.x / (gridSize.x * cellDiameter);
+            float percentY = localPos.y / (gridSize.y * cellDiameter);
+
             percentX = Mathf.Clamp01(percentX);
             percentY = Mathf.Clamp01(percentY);
-    
-            int x = Mathf.Clamp(Mathf.FloorToInt((gridSize.x) * percentX), 0, gridSize.x - 1);
-            int y = Mathf.Clamp(Mathf.FloorToInt((gridSize.y) * percentY), 0, gridSize.y - 1);
+
+            int x = Mathf.Clamp(Mathf.FloorToInt(gridSize.x * percentX), 0, gridSize.x - 1);
+            int y = Mathf.Clamp(Mathf.FloorToInt(gridSize.y * percentY), 0, gridSize.y - 1);
             return grid[x, y];
         }
     }

@@ -1,7 +1,9 @@
+using System;
 using UnityEngine;
 
 namespace WarOfTanks.Nav
 {
+    [Serializable]
     public class Cell
     {
         public Vector3 worldPos;
@@ -30,6 +32,8 @@ namespace WarOfTanks.Nav
                 cost = byte.MaxValue;
             else
                 cost += (byte)amount;
+
+            // Debug.Log($"Cell at {gridIndex} bestDir = {bestDirection}");
         }
     }
 }
