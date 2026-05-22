@@ -11,10 +11,10 @@ namespace WarOfTanks.API
 
         const string BASE_URL = "http://localhost:5000/api";
 
-        [SerializeField] string username = "Thibault";
-        [SerializeField] string email = "thibault.kine@laplateforme.io";
-        [SerializeField] string password = "azerty";
-
+        [Header("User API")]
+        [SerializeField] string username;
+        [SerializeField] string email;
+        [SerializeField] string password;
 
         public void SetUsername(string username) { this.username = username; Debug.Log($"Username changed to '{username}'"); }
         public void SetEmail(string email) { this.email = email; Debug.Log($"Email changed to '{email}'"); }
