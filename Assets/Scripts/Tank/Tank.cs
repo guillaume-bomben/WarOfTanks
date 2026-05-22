@@ -5,6 +5,8 @@ namespace WarOfTanks
 {
     public class Tank : Unit
     {
+        private Transform bodyTransform, headTransform;
+        public Team team;
         [Header("Équipe")]
         public int teamId = 0;
 
