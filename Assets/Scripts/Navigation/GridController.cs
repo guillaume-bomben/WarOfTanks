@@ -4,7 +4,6 @@ using WarOfTanks.MapGen;
 
 namespace WarOfTanks.Nav
 {
-
     public class GridController : MonoBehaviour
     {
         [Header("Flow Field")]

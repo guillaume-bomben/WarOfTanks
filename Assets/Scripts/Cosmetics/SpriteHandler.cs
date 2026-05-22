@@ -1,5 +1,5 @@
 using UnityEngine;
-// using TMPro;
+using TMPro;
 using UnityEngine.UI;
 
 namespace WarOfTanks.Cosmetics
@@ -10,7 +10,7 @@ namespace WarOfTanks.Cosmetics
         public Color color = Color.white;
 
         private SpriteRenderer headSR, bodySR;
-        private Text textMesh;
+        private TMP_Text textMesh;
 
         void Start()
         {
@@ -31,6 +31,8 @@ namespace WarOfTanks.Cosmetics
             if (headSR == null) { Debug.LogError("Head SpriteRenderer non trouvé !"); return; }
             if (bodySR == null) { Debug.LogError("Body SpriteRenderer non trouvé !"); return; }
 
+            headSR.sortingOrder = bodySR.sortingOrder + 1;
+
             string skinName = skin.ToString().ToLower();
 
             Sprite[] headSprites = Resources.LoadAll<Sprite>(
@@ -49,11 +51,15 @@ namespace WarOfTanks.Cosmetics
             // Vérifie que le sprite est bien assigné
             Debug.Log($"Body sprite assigné : {bodySR.sprite}");
         }
+
         void InitNameText()
         {
-            textMesh = transform.Find("Name").GetComponent<Text/*MeshPro*/>();
+            textMesh = transform.Find("Name").GetComponent<TextMeshPro>();
             if (textMesh != null)
+            {
                 textMesh.text = GetComponent<Unit>().name;
+                textMesh.transform.position = new Vector2(0, 7f);
+            }
         }
     }
 

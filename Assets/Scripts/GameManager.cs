@@ -1,3 +1,4 @@
+using Unity.Collections;
 using UnityEngine;
 using WarOfTanks.MapGen;
 
@@ -8,7 +9,7 @@ namespace WarOfTanks
         public static GameManager Instance;
 
         public TilemapPerlinGenerator mapGenerator;
-        [HideInInspector] public API.Player loggedPlayer;
+        [ReadOnly] public API.Player? loggedPlayer;
 
         void Awake()
         {

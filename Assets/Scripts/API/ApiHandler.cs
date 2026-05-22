@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 namespace WarOfTanks.API
 {
@@ -55,6 +56,9 @@ namespace WarOfTanks.API
             GameManager.Instance.loggedPlayer = player;
             if (player != null)
                 Debug.Log($"Successfully logged in as {player.username}");
+
+            // Move to game scene
+            SceneManager.LoadScene("Map_01");
         }
 
         public IEnumerator _Register(string url)
