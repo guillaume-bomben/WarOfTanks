@@ -9,7 +9,9 @@ namespace WarOfTanks
         public static GameManager Instance;
 
         public TilemapPerlinGenerator mapGenerator;
-        [ReadOnly] public API.Player? loggedPlayer;
+        [ReadOnly] public API.Player loggedPlayer;
+
+        private SpawnManager spawnManager;
 
         void Awake()
         {
@@ -22,6 +24,12 @@ namespace WarOfTanks
             {
                 Destroy(gameObject);
             }
+        }
+
+        private void Start()
+        {
+            spawnManager = GetComponent<SpawnManager>();
+            spawnManager.Init();
         }
     }
 }

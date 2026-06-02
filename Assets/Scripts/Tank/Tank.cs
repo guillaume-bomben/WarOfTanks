@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using WarOfTanks.Cosmetics;
 
 namespace WarOfTanks
 {
@@ -65,6 +66,14 @@ namespace WarOfTanks
 
             if (movement) movement.enabled = true;
             if (shooting) shooting.enabled = true;
+        }
+
+
+        public void SetSkin(TankSkin skin, Color color)
+        {
+            var sh = GetComponent<SpriteHandler>();
+            sh.skin = skin;
+            sh.color = color;
         }
     }
 }

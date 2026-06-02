@@ -84,6 +84,9 @@ public class CameraController : MonoBehaviour
 
     void HandleEdgeScroll()
     {
+        // Todo: faire que la vitesse du scrolling soit proportionnelle au zoom
+        // scrollSpeed *= cam.orthographicSize / 15;
+
         Vector3 move = Vector3.zero;
         Vector2 mouse = Input.mousePosition;
 

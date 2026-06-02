@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using WarOfTanks.Nav;
+using WarOfTanks.UI;
 
 namespace WarOfTanks
 {
@@ -21,6 +22,10 @@ namespace WarOfTanks
         private List<Tank> selectedTanks = new List<Tank>();
         private Vector2 dragStart;
         private bool isDragging = false;
+
+        [SerializeField] 
+        private UnitInfo unitInfoPrefab;
+        private UnitInfo currentUI;
 
         void Start()
         {
@@ -170,6 +175,8 @@ namespace WarOfTanks
         {
             DeselectAll();
             AddToSelection(tank);
+
+            ShowUnitInfo();
         }
 
         void AddToSelection(Tank tank)
@@ -201,5 +208,21 @@ namespace WarOfTanks
             Vector3 pos = mainCam.ScreenToWorldPoint(Input.mousePosition);
             return new Vector2(pos.x, pos.y);
         }
+
+
+        // Affichage du UnitInfo
+        void ShowUnitInfo()
+        {
+            if (currentUI != null)
+            {
+                Destroy(currentUI.gameObject);
+                currentUI = null;
+            }
+
+            currentUI = UIManager.Instance.ShowUI(unitInfoPrefab);
+            currentUI.Init(selectedTanks[0]);
+        }
+
+        public List<Tank> GetSelection() => selectedTanks;
     }
 }

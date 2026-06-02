@@ -62,5 +62,7 @@ namespace WarOfTanks
                 stats.ApplyModifier(statMod);
             }
         }
+
+        public float GetCurrentHealth() => currentHealth;
     }
 }
