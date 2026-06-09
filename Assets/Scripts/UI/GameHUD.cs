@@ -61,12 +61,10 @@ namespace WarOfTanks.UI
         void UpdateTimer(float timeRemaining)
         {
             if (timerText == null) return;
-
+            timeRemaining = Mathf.Max(0f, timeRemaining);   // ← jamais négatif
             int minutes = Mathf.FloorToInt(timeRemaining / 60f);
             int seconds = Mathf.FloorToInt(timeRemaining % 60f);
             timerText.text = $"{minutes:00}:{seconds:00}";
-
-            // Rouge quand < 30 secondes
             timerText.color = timeRemaining < 30f ? Color.red : Color.white;
         }
 

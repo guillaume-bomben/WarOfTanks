@@ -41,22 +41,26 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        matchDuration = PlayerPrefs.GetFloat("MatchDuration", matchDuration);
         StartMatch();
     }
 
-    void Update()
+void Update()
+{
+    if (!MatchRunning) return;
+
+    TimeRemaining -= Time.deltaTime;
+
+    if (TimeRemaining <= 0f)
     {
-        if (!MatchRunning) return;
-
-        TimeRemaining -= Time.deltaTime;
+        TimeRemaining = 0f;
         OnTimeChanged?.Invoke(TimeRemaining);
-
-        if (TimeRemaining <= 0f)
-        {
-            TimeRemaining = 0f;
-            EndMatch();
-        }
+        EndMatch();
+        return;
     }
+
+    OnTimeChanged?.Invoke(TimeRemaining);
+}
 
     // ── API publique ─────────────────────────────────────────────────────
 
