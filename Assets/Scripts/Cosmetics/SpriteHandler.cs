@@ -57,7 +57,7 @@ namespace WarOfTanks.Cosmetics
             textMesh = transform.Find("Name").GetComponent<TextMeshPro>();
             if (textMesh != null)
             {
-                textMesh.text = GetComponent<Unit>().name;
+                textMesh.text = $"\"{GetComponent<Unit>().name.Split('"')[1]}\"";
                 textMesh.transform.position = new Vector2(0, 7f);
             }
         }

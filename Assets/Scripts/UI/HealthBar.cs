@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,6 +8,8 @@ namespace WarOfTanks.UI
     {
         public Vector2 offset;
         public Image fillImage; // Image de remplissage (type Filled)
+        [SerializeField] TMP_Text nameText;
+        
         private Unit unit;
 
         public bool autoFindUnit = true;
@@ -14,7 +17,9 @@ namespace WarOfTanks.UI
         void Start()
         {
             if (autoFindUnit)
+            {
                 unit = GetComponentInParent<Unit>();
+            }
         }
 
         void Update()
@@ -33,6 +38,9 @@ namespace WarOfTanks.UI
             {
                 transform.rotation = Quaternion.identity;
                 transform.position = unit.transform.position + new Vector3(offset.x, offset.y, 0);
+
+                nameText.transform.rotation = Quaternion.identity;
+                nameText.transform.position = unit.transform.position + new Vector3(0, offset.y + 1, 0);
             }
         }
 

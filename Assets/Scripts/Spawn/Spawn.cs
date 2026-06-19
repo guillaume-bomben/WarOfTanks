@@ -1,39 +1,119 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using WarOfTanks.Cosmetics;
+using WarOfTanks.Stats;
 
 namespace WarOfTanks
 {
     public class Spawn : MonoBehaviour
     {
+        [Header("Team")]
         public Team team;
-        public int teamSize;
-        public List<TankMovement> units = new List<TankMovement>();
+        public int teamSize = 3;
 
-        public float respawnTime;
+        [Header("Prefab")]
+        public GameObject tankPrefab;
+
+        [Header("Spawn Settings")]
+        public float respawnTime = 1f;
+        public float startDelay = 5f;
+        public float spawnRadius = 1.5f;
 
         private SpriteRenderer sr;
-
+        private List<Vector3> usedPositions = new List<Vector3>();
 
         private void Start()
         {
             sr = GetComponent<SpriteRenderer>();
             SetupSpawner();
 
-            // First spawn sequence
-            foreach (var tank in units)
+            StartCoroutine(StartSpawnSequence());
+        }
+
+        IEnumerator StartSpawnSequence()
+        {
+            // ⏳ Countdown début de partie
+            float countdown = startDelay;
+
+            while (countdown > 0)
             {
-                var unit = tank.GetUnit();
-                StartCoroutine(SpawnCoroutine(unit));
+                yield return new WaitForSeconds(1f);
+                countdown--;
+            }
+
+            // Spawn progressif
+            for (int i = 0; i < teamSize; i++)
+            {
+                SpawnUnit();
+                yield return new WaitForSeconds(respawnTime);
             }
         }
 
-
-        IEnumerator SpawnCoroutine(Unit unit)
+        void SpawnUnit()
         {
+            Vector3 spawnPos = GetSpawnPosition();
 
+            GameObject go = Instantiate(tankPrefab, spawnPos, Quaternion.identity);
 
-            yield return null;
+            Tank tank = go.GetComponent<Tank>();
+            TankMovement movement = go.GetComponent<TankMovement>();
+
+            if (tank != null)
+            {
+                SetupTank(tank);
+            }
+
+            if (movement != null)
+            {
+                UnitManager.Instance.Register(movement);
+            }
+        }
+
+        void SetupTank(Tank tank)
+        {
+            tank.team = team;
+            tank.stats = Resources.Load<Stats_SO>("Stats/BaseTankStats");
+            tank.name = $"Tank T-{Random.Range(10, 99)} \"{tank.GetRandomCodename()}\"";
+
+            tank.transform.localScale = new Vector3(0.5f, 0.5f, 1);
+
+            if (team == Team.Red)
+            {
+                tank.SetSkin(TankSkin.Woodland, Color.red);
+            }
+            else
+            {
+                tank.SetSkin(TankSkin.Tiger, Color.blue);
+            }
+        }
+
+        Vector3 GetSpawnPosition()
+        {
+            for (int i = 0; i < 20; i++)
+            {
+                Vector2 randomOffset = Random.insideUnitCircle * spawnRadius;
+                Vector3 candidate = transform.position + new Vector3(randomOffset.x, randomOffset.y, 0);
+
+                bool tooClose = false;
+
+                foreach (var pos in usedPositions)
+                {
+                    if (Vector3.Distance(candidate, pos) < 1f)
+                    {
+                        tooClose = true;
+                        break;
+                    }
+                }
+
+                if (!tooClose)
+                {
+                    usedPositions.Add(candidate);
+                    return candidate;
+                }
+            }
+
+            return transform.position;
         }
 
         void SetupSpawner()
@@ -41,28 +121,25 @@ namespace WarOfTanks
             switch (team)
             {
                 case Team.Red:
-                    var tex = Resources.Load<Texture2D>("Sprites/base_red");
-                    sr.sprite = Sprite.Create(
-                        tex,
-                        new Rect(0, 0, tex.width, tex.height),
-                        new Vector2(0.5f, 0.5f),
-                        10f
-                    );
+                    sr.sprite = LoadSprite("Sprites/base_red");
                     break;
 
                 case Team.Blue:
-                    var tex2 = Resources.Load<Texture2D>("Sprites/base_blue");
-                    sr.sprite = Sprite.Create(
-                        tex2,
-                        new Rect(0, 0, tex2.width, tex2.height),
-                        new Vector2(0.5f, 0.5f),
-                        10f
-                    );
-                    break;
-
-                default:
+                    sr.sprite = LoadSprite("Sprites/base_blue");
                     break;
             }
+        }
+
+        Sprite LoadSprite(string path)
+        {
+            Texture2D tex = Resources.Load<Texture2D>(path);
+
+            return Sprite.Create(
+                tex,
+                new Rect(0, 0, tex.width, tex.height),
+                new Vector2(0.5f, 0.5f),
+                10f
+            );
         }
     }
 }

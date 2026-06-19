@@ -7,7 +7,6 @@ namespace WarOfTanks
     public class Tank : Unit
     {
         private Transform bodyTransform, headTransform;
-        public Team team;
         [Header("Équipe")]
         public int teamId = 0;
 
@@ -20,6 +19,7 @@ namespace WarOfTanks
 
         private Vector3 startPosition;
         private Quaternion startRotation;
+
 
         protected override void Awake()
         {
@@ -74,6 +74,43 @@ namespace WarOfTanks
             var sh = GetComponent<SpriteHandler>();
             sh.skin = skin;
             sh.color = color;
+        }
+
+
+        private string[] codenames =
+        {
+            "Alpha",
+            "Bravo",
+            "Charlie",
+            "Delta",
+            "Echo",
+            "Foxtrot",
+            "Golf",
+            "Hotel",
+            "India",
+            "Juliet",
+            "Kilo",
+            "Lima",
+            "Mike",
+            "November",
+            "Oscar",
+            "Papa",
+            "Quebec",
+            "Romeo",
+            "Sierra",
+            "Tango",
+            "Uniform",
+            "Victor",
+            "Whiskey",
+            "X-ray",
+            "Yankee",
+            "Zulu"
+        };
+
+        public string GetRandomCodename()
+        {
+            name = codenames[Random.Range(0, codenames.Length)];
+            return name;
         }
     }
 }

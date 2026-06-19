@@ -71,7 +71,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1701336583
   m_SortingLayer: 2
-  m_SortingOrder: 3
+  m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 9fe00d234003c584ea0682ff01e4efce, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -97,5 +97,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   team: 0
   teamSize: 3
-  units: []
+  tankPrefab: {fileID: 5347767115568449757, guid: b77b909c5ee9b554e8f410a04f947dcc, type: 3}
   respawnTime: 5
+  startDelay: 5
+  spawnRadius: 1.5

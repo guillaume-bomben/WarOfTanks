@@ -2,15 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace WarOfTanks.UI
 {
     public class UnitInfo : MonoBehaviour
     {
-        public WarOfTanks.Unit unit;
+        public Unit unit;
 
         public Color statUpColor, statDownColor; // Si la stat est baissée / augmentée
         Color normalColor = Color.white;
+
+        public Image teamBandImage;
 
         public TMP_Text unitName;
 
@@ -28,6 +31,21 @@ namespace WarOfTanks.UI
 
         private void InitContent()
         {
+            switch (unit.team)
+            {
+                case Team.Blue:
+                    teamBandImage.color = new Color(0f, 0.2f, 0.9f);
+                    break;
+
+                case Team.Red:
+                    teamBandImage.color = new Color(0.9f, 0f, 0f);
+                    break;
+
+                default:
+                    teamBandImage.color = new Color(0.5f, 0.5f, 0.5f);
+                    break;
+            }
+
             unitName.text = unit.name;
 
             StatLine
