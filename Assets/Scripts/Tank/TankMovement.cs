@@ -182,5 +182,7 @@ namespace WarOfTanks
         }
 
         public bool IsMoving => isMoving;
+
+        public Unit GetUnit() => tank;
     }
 }

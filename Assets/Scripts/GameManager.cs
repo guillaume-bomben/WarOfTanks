@@ -28,8 +28,8 @@ namespace WarOfTanks
 
         private void Start()
         {
-            spawnManager = GetComponent<SpawnManager>();
-            spawnManager.Init();
+            TryGetComponent<SpawnManager>(out spawnManager);
+            spawnManager?.Init();
         }
     }
 }

@@ -298,8 +298,7 @@ namespace  WarOfTanks.MapGen
             TerrainRuleTile ruleTile = tile as TerrainRuleTile;
             if (ruleTile == null) return false;
 
-            if (!ruleTile.isWalkable) return false;
-            if (!ruleTile.isHazard) return false;
+            if (!ruleTile.isWalkable || !ruleTile.isHazard) return false;
 
             return true;
         }
