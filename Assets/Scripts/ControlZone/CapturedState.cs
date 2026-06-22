@@ -2,6 +2,13 @@ using UnityEngine;
 
 namespace WarOfTanks
 {
+    /// <summary>
+    /// Zone capturée (jauge à 100%) : l'équipe marque des points tant qu'elle tient.
+    /// - équipe présente   -> marque des points, reset du timeout
+    /// - zone vide         -> timeout puis décroissance lente
+    /// - équipe adverse seule -> décroissance à vitesse de capture (ignore le timeout)
+    /// Dès que la jauge passe sous 100% -> retour en cours de capture.
+    /// </summary>
     public class CapturedState : IState
     {
         private float emptyTimer;
@@ -21,43 +28,28 @@ namespace WarOfTanks
                 return;
             }
 
-            Team dominantTeam = zone.GetDominantTeam();
+            Team dominant = zone.GetDominantTeam();
 
-            if (dominantTeam == zone.capturingTeam)
+            if (dominant == zone.capturingTeam)
             {
-                // Reset timeout timer
                 emptyTimer = 0f;
-                // Marquer des points pour l'équipe (zone.capturingTeam)
-                if (ScoreManager.Instance != null)
-                {
-                    ScoreManager.Instance.AddScore(zone.capturingTeam, zone.pointsPerSecond * Time.deltaTime);
-                }
+                zone.AddScoreForHoldingTeam(Time.deltaTime);
             }
             else if (zone.IsEmpty())
             {
-                // No tanks in the zone, wait for timeout
                 emptyTimer += Time.deltaTime;
                 if (emptyTimer >= zone.emptyTimeout)
-                {
                     zone.captureProgress -= zone.slowDecaySpeed * Time.deltaTime;
-                }
             }
-            else if (dominantTeam != Team.None && dominantTeam != zone.capturingTeam)
+            else if (dominant != Team.None && dominant != zone.capturingTeam)
             {
-                // Enemy team is alone, decrease at normal capture speed. Ignore timeout.
                 zone.captureProgress -= zone.captureSpeed * Time.deltaTime;
             }
 
-            // Check if captured state is lost
             if (zone.captureProgress < 1f)
-            {
                 zone.SwitchState(zone.capturingState);
-            }
         }
 
-        public void Exit(ControlZone zone)
-        {
-            // Leaving captured state
-        }
+        public void Exit(ControlZone zone) { }
     }
 }

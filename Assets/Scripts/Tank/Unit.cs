@@ -6,18 +6,27 @@ namespace WarOfTanks
 {
     public abstract class Unit : MonoBehaviour
     {
-        [SerializeField] public Stats_SO stats;
+        [Tooltip("Asset de stats de base (partagé). Une COPIE est créée par tank à l'Awake.")]
+        [SerializeField] private Stats_SO baseStats;
+
+        /// <summary>Stats propres à CETTE instance (copie runtime du baseStats).</summary>
+        public Stats_SO stats { get; private set; }
+
         public new string name;
 
         protected float currentHealth;
 
         protected virtual void Awake()
         {
-            if (stats == null)
+            if (baseStats == null)
             {
                 Debug.LogError($"{gameObject.name} : Stats_SO manquant !");
                 return;
             }
+
+            // ── Clone : chaque tank a SA propre copie, le terrain/modifiers
+            //    n'affectent plus l'asset partagé ni les autres tanks.
+            stats = Instantiate(baseStats);
 
             if (stats.maxHealth <= 0)
             {
@@ -47,16 +56,16 @@ namespace WarOfTanks
 
         public float GetHealthPercent()
         {
-            if (stats.maxHealth <= 0) return 0;
+            if (stats == null || stats.maxHealth <= 0) return 0f;
             return currentHealth / stats.maxHealth;
         }
-        
+
         void ApplyTerrainEffect()
         {
             TerrainDataModifier mod = GameManager.Instance.mapGenerator.GetModifierAtWorldPos(transform.position);
-            if (mod == null) 
+            if (mod == null)
                 return;
-            
+
             foreach (var statMod in mod.modifiers)
             {
                 stats.ApplyModifier(statMod);

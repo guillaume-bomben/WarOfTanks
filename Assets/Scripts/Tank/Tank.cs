@@ -9,6 +9,7 @@ namespace WarOfTanks
         public Team team;
         [Header("Équipe")]
         public int teamId = 0;
+        public int TeamId => teamId;
 
         [Header("Respawn")]
         public float respawnDelay = 3f;

@@ -2,12 +2,17 @@ using UnityEngine;
 
 namespace WarOfTanks
 {
+    /// <summary>
+    /// Zone en cours de capture : la jauge évolue, AUCUN point n'est marqué.
+    /// - équipe qui capture seule -> jauge monte (captureSpeed)
+    /// - équipe adverse seule      -> jauge descend (captureSpeed)
+    /// - zone vide                 -> jauge descend lentement (slowDecaySpeed)
+    /// - 2 équipes                 -> conflit
+    /// Transitions : jauge >= 1 -> capturée ; jauge <= 0 -> neutre.
+    /// </summary>
     public class CapturingState : IState
     {
-        public void Enter(ControlZone zone)
-        {
-            // Transitioned into capturing state
-        }
+        public void Enter(ControlZone zone) { }
 
         public void Update(ControlZone zone)
         {
@@ -19,26 +24,18 @@ namespace WarOfTanks
 
             if (zone.IsEmpty())
             {
-                // No tanks = slow decay
                 zone.captureProgress -= zone.slowDecaySpeed * Time.deltaTime;
             }
             else
             {
-                Team dominantTeam = zone.GetDominantTeam();
-                
-                if (dominantTeam == zone.capturingTeam)
-                {
-                    // Same team progressing capture
+                Team dominant = zone.GetDominantTeam();
+
+                if (dominant == zone.capturingTeam)
                     zone.captureProgress += zone.captureSpeed * Time.deltaTime;
-                }
-                else if (dominantTeam != Team.None)
-                {
-                    // Enemy team reverting capture (decreases at same capture speed)
+                else if (dominant != Team.None)
                     zone.captureProgress -= zone.captureSpeed * Time.deltaTime;
-                }
             }
 
-            // Clamp progress and Check Transitions
             if (zone.captureProgress >= 1f)
             {
                 zone.captureProgress = 1f;
@@ -47,14 +44,10 @@ namespace WarOfTanks
             else if (zone.captureProgress <= 0f)
             {
                 zone.captureProgress = 0f;
-                // Once depleted, go back to Neutral (it might go to enemy capturing immediately)
                 zone.SwitchState(zone.neutralState);
             }
         }
 
-        public void Exit(ControlZone zone)
-        {
-            
-        }
+        public void Exit(ControlZone zone) { }
     }
 }

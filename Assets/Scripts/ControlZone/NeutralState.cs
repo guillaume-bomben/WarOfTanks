@@ -1,37 +1,34 @@
-using UnityEngine;
-
 namespace WarOfTanks
 {
+    /// <summary>
+    /// Zone neutre : aucune équipe ne contrôle, jauge vide, aucun point.
+    /// - 2 équipes présentes -> conflit
+    /// - 1 seule équipe présente -> en cours de capture
+    /// </summary>
     public class NeutralState : IState
     {
         public void Enter(ControlZone zone)
         {
-            // Zone was neutralized
             zone.capturingTeam = Team.None;
             zone.captureProgress = 0f;
         }
 
         public void Update(ControlZone zone)
         {
-            // Check for conflict first
             if (zone.IsConflict())
             {
                 zone.SwitchState(zone.conflictState);
                 return;
             }
 
-            // Check if one team is capturing
-            Team dominantTeam = zone.GetDominantTeam();
-            if (dominantTeam != Team.None)
+            Team dominant = zone.GetDominantTeam();
+            if (dominant != Team.None)
             {
-                zone.capturingTeam = dominantTeam;
+                zone.capturingTeam = dominant;
                 zone.SwitchState(zone.capturingState);
             }
         }
 
-        public void Exit(ControlZone zone)
-        {
-            // Transitioning out of neutral
-        }
+        public void Exit(ControlZone zone) { }
     }
 }
