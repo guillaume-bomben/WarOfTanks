@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using WarOfTanks.Cosmetics;
+using WarOfTanks.UI;
 
 namespace WarOfTanks
 {
@@ -111,6 +112,20 @@ namespace WarOfTanks
         {
             name = codenames[Random.Range(0, codenames.Length)];
             return name;
+        }
+
+        public void HideHealthbar()
+        {
+            var healthbar = GetComponentInChildren<HealthBar>();
+            if (healthbar != null)
+                healthbar.gameObject.SetActive(false);
+        }
+
+        public void ShowHealthbar()
+        {
+            var healthbar = GetComponentInChildren<HealthBar>();
+            if (healthbar != null)
+                healthbar.gameObject.SetActive(true);
         }
     }
 }

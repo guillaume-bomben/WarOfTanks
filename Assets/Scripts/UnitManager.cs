@@ -26,6 +26,10 @@ namespace WarOfTanks
                 unit.Tick();
             }
         }
-    
+
+        public List<TankMovement> GetAllUnits()
+        {
+            return units;
+        }
     }
 }

@@ -1,6 +1,7 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using WarOfTanks.Cosmetics.FogOfWar;
 
 namespace WarOfTanks.MapGen
 {
@@ -103,7 +104,14 @@ namespace WarOfTanks.MapGen
 
                         if (noise > layer.threshold)
                         {
-                            PlaceHazardTile(pos, layer.ruleTile);
+                            if (!FogManager.Instance.IsExplored(pos))
+                            {
+                                HideHazardTile(pos);
+                            }
+                            else
+                            {
+                                PlaceHazardTile(pos, layer.ruleTile);
+                            }
                             break;
                         }
                     }
@@ -117,6 +125,12 @@ namespace WarOfTanks.MapGen
         {
             mapGen.worldMap.SetTile(pos, tile);
             hazardMap.SetTile(pos, tile);
+        }
+
+        void HideHazardTile(Vector3Int pos)
+        {
+            mapGen.worldMap.SetTile(pos, null);
+            hazardMap.SetTile(pos, null);
         }
 
         bool IsFlat(int x, int y)

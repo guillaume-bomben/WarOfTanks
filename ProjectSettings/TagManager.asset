@@ -45,12 +45,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: UI
-    uniqueID: 2180677843
+  - name: Units
+    uniqueID: 2593630713
     locked: 0
   - name: Fog
     uniqueID: 756699507
     locked: 0
-  - name: Units
-    uniqueID: 2593630713
+  - name: UI
+    uniqueID: 2180677843
     locked: 0

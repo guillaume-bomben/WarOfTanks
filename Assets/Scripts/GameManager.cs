@@ -10,6 +10,7 @@ namespace WarOfTanks
 
         public TilemapPerlinGenerator mapGenerator;
         [ReadOnly] public API.Player loggedPlayer;
+        public Team playerTeam;
 
         private SpawnManager spawnManager;
 

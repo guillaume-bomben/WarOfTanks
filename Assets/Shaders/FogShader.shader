@@ -7,8 +7,11 @@ Shader "Custom/FogShader"
 
     SubShader
     {
-        Tags { "RenderType"="Transparent" }
+        Tags { "Queue"="Transparent" "RenderType"="Transparent" }
+
         Blend SrcAlpha OneMinusSrcAlpha
+        ZWrite Off
+        Cull Off
 
         Pass
         {
@@ -16,7 +19,9 @@ Shader "Custom/FogShader"
             #pragma vertex vert
             #pragma fragment frag
 
-            sampler2D _FogTex;
+            #include "UnityCG.cginc"
+
+            sampler2D _MainTex;
 
             struct appdata
             {
@@ -26,22 +31,21 @@ Shader "Custom/FogShader"
 
             struct v2f
             {
+                float4 pos : SV_POSITION;
                 float2 uv : TEXCOORD0;
-                float4 vertex : SV_POSITION;
             };
 
-            v2f vert (appdata v)
+            v2f vert(appdata v)
             {
                 v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = v.uv;
                 return o;
             }
 
-            fixed4 frag (v2f i) : SV_Target
+            fixed4 frag(v2f i) : SV_Target
             {
-                fixed4 fog = tex2D(_FogTex, i.uv);
-                return fog;
+                return tex2D(_MainTex, i.uv);
             }
             ENDCG
         }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using WarOfTanks.Cosmetics.FogOfWar;
 using WarOfTanks.Nav;
 
 namespace WarOfTanks
@@ -110,6 +111,12 @@ namespace WarOfTanks
             // 7. Vélocité
             //rb.velocity = finalDir * tank.stats.moveSpeed * speedFactor;
             simulatedVelocity = finalDir * tank.stats.moveSpeed * speedFactor;
+
+            if (tank.team != GameManager.Instance.playerTeam)
+            {
+                bool visible = FogManager.Instance.IsVisible(transform.position);
+                gameObject.SetActive(visible);
+            }
         }
 
         private void Update()

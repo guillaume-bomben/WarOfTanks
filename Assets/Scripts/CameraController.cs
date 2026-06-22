@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using WarOfTanks;
 
 /// <summary>
 /// Caméra RTS :
@@ -51,33 +53,13 @@ public class CameraController : MonoBehaviour
 
     void CenterOnPlayerTanks()
     {
-        // Cherche tous les GameObjects taggés "Tank" sur le layer TeamA
-        GameObject[] tanks = GameObject.FindGameObjectsWithTag(playerTag);
-
-        List<Vector3> positions = new List<Vector3>();
-        foreach (GameObject t in tanks)
-        {
-            // On prend ceux qui sont sur le layer du joueur (TeamA)
-            if (playerLayer == (playerLayer | (1 << t.layer)))
-                positions.Add(t.transform.position);
-        }
-
-        if (positions.Count == 0)
-        {
-            // Fallback : prend tous les tanks si aucun trouvé sur le layer
-            foreach (GameObject t in tanks)
-                positions.Add(t.transform.position);
-        }
-
-        if (positions.Count == 0) return;
-
-        // Calcule le centroïde
-        Vector3 center = Vector3.zero;
-        foreach (Vector3 p in positions) center += p;
-        center /= positions.Count;
+        // Centrer sur la base du joueur
+        var playerBase = FindObjectsByType<Spawn>(FindObjectsSortMode.None)
+            .Where(s => s.team == GameManager.Instance.playerTeam).First();
+        var basePosition = playerBase.transform.position;
 
         // Positionne la caméra (garde la coordonnée Z)
-        transform.position = new Vector3(center.x, center.y, transform.position.z);
+        transform.position = new Vector3(basePosition.x, basePosition.y, transform.position.z);
     }
 
     // ── Edge scrolling ───────────────────────────────────────────────────

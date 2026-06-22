@@ -33,7 +33,6 @@ namespace WarOfTanks
 
         IEnumerator StartSpawnSequence()
         {
-            // ⏳ Countdown début de partie
             float countdown = startDelay;
 
             while (countdown > 0)
@@ -46,8 +45,10 @@ namespace WarOfTanks
             for (int i = 0; i < teamSize; i++)
             {
                 SpawnUnit();
-                yield return new WaitForSeconds(respawnTime);
+                //yield return new WaitForSeconds(respawnTime);
             }
+
+            yield return null;
         }
 
         void SpawnUnit()
