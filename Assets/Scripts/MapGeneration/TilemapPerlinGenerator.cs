@@ -249,6 +249,59 @@ namespace  WarOfTanks.MapGen
         }
 
         public float[,] GetHeightMap() => heightMap;
+
+        public HashSet<Vector2Int> GetMainIsland()
+        {
+            HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
+            Queue<Vector2Int> queue = new Queue<Vector2Int>();
+
+            Vector2Int start = new Vector2Int(width / 2, height / 2);
+            queue.Enqueue(start);
+            visited.Add(start);
+
+            while (queue.Count > 0)
+            {
+                var current = queue.Dequeue();
+
+                foreach (var dir in new Vector2Int[]
+                {
+                    Vector2Int.up, Vector2Int.down,
+                    Vector2Int.left, Vector2Int.right,
+                })
+                {
+                    Vector2Int next = current + dir;
+
+                    if (next.x < 0 || next.y < 0 || next.x >= width || next.y >= height)
+                        continue;
+
+                    if (visited.Contains(next))
+                        continue;
+
+                    Vector3Int tilePos = new Vector3Int(next.x - width / 2, next.y - height / 2, 0);
+
+                    if (!IsValidSpawn(tilePos))
+                        continue;
+
+                    visited.Add(next);
+                    queue.Enqueue(next);
+                }
+            }
+
+            return visited;
+        }
+
+        public bool IsValidSpawn(Vector3Int pos)
+        {
+            TileBase tile = worldMap.GetTile(pos);
+            if (tile == null) return false;
+
+            TerrainRuleTile ruleTile = tile as TerrainRuleTile;
+            if (ruleTile == null) return false;
+
+            if (!ruleTile.isWalkable || !ruleTile.isHazard) return false;
+
+            return true;
+        }
     }
 }
 

@@ -9,6 +9,8 @@ namespace WarOfTanks
         [SerializeField] public Stats_SO stats;
         public new string name;
 
+        public Team team;
+
         protected float currentHealth;
 
         protected virtual void Awake()
@@ -62,5 +64,7 @@ namespace WarOfTanks
                 stats.ApplyModifier(statMod);
             }
         }
+
+        public float GetCurrentHealth() => currentHealth;
     }
 }
