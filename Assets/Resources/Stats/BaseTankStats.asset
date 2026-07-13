@@ -17,4 +17,5 @@ MonoBehaviour:
   moveSpeed: 10
   attackDamage: 20
   attackRange: 45
-  visionRange: 50
+  fireRate: 1
+  visionRange: 20

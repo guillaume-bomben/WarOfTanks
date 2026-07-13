@@ -1,4 +1,5 @@
 using UnityEngine;
+using WarOfTanks.Cosmetics.FogOfWar;
 using WarOfTanks.Nav;
 
 namespace WarOfTanks
@@ -44,6 +45,8 @@ namespace WarOfTanks
         private bool isMoving = false;
         private Vector2 destination; // position world de la cellule cible
 
+        private Vector2 simulatedVelocity;
+
         // ── Masque de layers pour la séparation (tanks uniquement) ───────
         [Header("Layer")]
         public LayerMask tankLayerMask;
@@ -52,13 +55,16 @@ namespace WarOfTanks
         {
             tank = GetComponent<Tank>();
             rb   = GetComponent<Rigidbody2D>();
+
+            UnitManager.Instance.Register(this);
         }
 
-        void FixedUpdate()
+        public void Tick()
         {
             if (!isMoving || currentFlowField == null)
             {
-                rb.velocity = Vector2.zero;
+                simulatedVelocity = Vector2.zero;
+                //rb.velocity = Vector2.zero;
                 return;
             }
 
@@ -66,7 +72,8 @@ namespace WarOfTanks
             Cell currentCell = currentFlowField.GetCellFromWorldPos(transform.position);
             if (currentCell == null || currentCell.bestDirection == GridDirection.None)
             {
-                rb.velocity = Vector2.zero;
+                simulatedVelocity = Vector2.zero;
+                //rb.velocity = Vector2.zero;
                 isMoving = false;
                 return;
             }
@@ -77,7 +84,8 @@ namespace WarOfTanks
             float distToDest = Vector2.Distance(transform.position, destination);
             if (distToDest < arrivalRadius)
             {
-                rb.velocity = Vector2.zero;
+                simulatedVelocity = Vector2.zero;
+                //rb.velocity = Vector2.zero;
                 isMoving = false;
                 currentFlowField = null;
                 return;
@@ -101,7 +109,24 @@ namespace WarOfTanks
             );
 
             // 7. Vélocité
-            rb.velocity = finalDir * tank.stats.moveSpeed * speedFactor;
+            //rb.velocity = finalDir * tank.stats.moveSpeed * speedFactor;
+            simulatedVelocity = finalDir * tank.stats.moveSpeed * speedFactor;
+
+            if (tank.team != GameManager.Instance.playerTeam)
+            {
+                bool visible = FogManager.Instance.IsVisible(transform.position);
+                gameObject.SetActive(visible);
+            }
+        }
+
+        private void Update()
+        {
+            rb.velocity = simulatedVelocity;
+            if (simulatedVelocity != Vector2.zero) 
+            {
+                float angle = Mathf.Atan2(simulatedVelocity.y, simulatedVelocity.x) * Mathf.Rad2Deg - 90f;
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 0, angle), 200 * Time.deltaTime);
+            }
         }
 
         /// <summary>
@@ -164,5 +189,7 @@ namespace WarOfTanks
         }
 
         public bool IsMoving => isMoving;
+
+        public Unit GetUnit() => tank;
     }
 }
